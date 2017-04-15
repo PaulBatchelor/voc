@@ -1,0 +1,77 @@
+\font\bigfont=cmssdc10 at 48pt
+\font\mediumfont=cmssdc10 at 18pt
+\font\sectionfont=cmssdc10 at 14pt
+
+\def\startcenter{%
+    \par
+    \begingroup
+    \leftskip=0pt plus 1fil
+    \rightskip=\leftskip
+    \parindent=0pt
+    \parfillskip=0pt
+}
+
+\def\stopcenter{%
+    \par
+    \endgroup    
+}
+
+\def\sporthcode #1{
+    {\tt
+        \smallskip
+        \begingroup \narrower
+        \input sp/#1
+        \endgroup
+        \smallskip
+    }
+
+}
+
+\def \sword #1 {
+    {\hbox{\tt#1}}
+}
+
+\def \subsec #1 {
+    {\sectionfont #1}
+}
+
+% Slightly redefined macros from cwebmac
+
+\def\MN#1{\par % common code for \M, \N
+  {\xdef\secstar{#1}\let\*=\empty\xdef\secno{#1}}% remove \* from section name
+  \ifx \secno\secstar \onmaybe \else \ontrue \fi
+  \mark{{{\tensy x}\secno}{\the\gdepth}{\the\gtitle}}
+}
+
+\def\stsec_alt{\rightskip=0pt % get out of C mode (cf. \B)
+  \sfcode`;=1500 \pretolerance 200 \hyphenpenalty 50 \exhyphenpenalty 50
+  %\noindent{\let\*=\lapstar\bf\secstar.\quad}%
+  \ifpdftex\smash{\raise\baselineskip\hbox to0pt{%
+     \let\*=\empty\pdfdest num \secstar fith}}
+  \else\ifpdf\smash{\raise\baselineskip\hbox to0pt{%
+     \let\*=\empty\special{%
+       pdf: dest (\romannumeral\secstar) [ @thispage /FitH @ypos ]}}}\fi\fi}
+
+
+\outer\def\M#1{\MN{#1}\ifon\vfil\penalty-100\vfilneg % beginning of section
+  \vskip\intersecskip\startsection\ignorespaces}
+
+\outer\def\N#1#2#3.{% beginning of starred section
+  \ifacro{\toksF={}\makeoutlinetoks#3\outlinedone\outlinedone}\fi
+  \gdepth=#1
+  \gtitle={#3}
+  \MN{#2}%
+  \ifon\ifnum#1<\secpagedepth \vfil\eject % force page break if depth is small
+    \else\vfil\penalty-100\vfilneg\vskip\intersecskip\fi\fi
+  \message{*\secno} % progress report
+  \def\stripprefix##1>{}\def\gtitletoks{#3}%
+  \edef\gtitletoks{\expandafter\stripprefix\meaning\gtitletoks}%
+  \edef\next{\write\cont{\ZZ{\gtitletoks}{#1}{\secno}% write to contents file
+   {\noexpand\the\pageno}{\the\toksE}}}\next % \ZZ{title}{depth}{sec}{page}{ss}
+  \ifpdftex\expandafter\xdef\csname curr#1\endcsname{\secno}
+    \ifnum#1>0\countB=#1 \advance\countB by-1
+      \advancenumber{chunk\the\countB.\expnumber{curr\the\countB}}\fi\fi
+  \ifpdf\special{pdf: outline #1 << /Title (\the\toksE) /Dest
+    [ @thispage /FitH @ypos ] >>}\fi
+  \ifon\stsec_alt{\mediumfont #3 {\rm (#2) }\quad \smallskip}\ignorespaces}
+
