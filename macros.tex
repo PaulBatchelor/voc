@@ -1,5 +1,5 @@
 \font\bigfont=cmssdc10 at 48pt
-\font\mediumfont=cmssdc10 at 18pt
+\font\mediumfont=cmssdc10 at 24pt
 \font\sectionfont=cmssdc10 at 14pt
 
 \def\startcenter{%
@@ -32,7 +32,7 @@
 }
 
 \def \subsec #1 {
-    {\sectionfont #1}
+    {\medskip \noindent \sectionfont #1 \smallskip}
 }
 
 % Slightly redefined macros from cwebmac
@@ -73,5 +73,6 @@
       \advancenumber{chunk\the\countB.\expnumber{curr\the\countB}}\fi\fi
   \ifpdf\special{pdf: outline #1 << /Title (\the\toksE) /Dest
     [ @thispage /FitH @ypos ] >>}\fi
-  \ifon\stsec_alt{\noindent \mediumfont #3 {\rm (#2) }\quad \smallskip}\ignorespaces}
+  \ifon\stsec_alt{\bigheader{#3} {\rm (#2) }\quad \smallskip}\ignorespaces}
 
+\def\bigheader#1{\noindent {\mediumfont #1}}
