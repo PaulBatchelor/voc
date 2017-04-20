@@ -12,8 +12,8 @@ voc.tex: voc.w $(SP) macros.tex simplex.w
 	cweave -x voc.w
 
 voc.dvi: voc.tex 
-	bibtex voc
 	tex "\let\pdf+ \input voc"
+	bibtex voc
 
 voc.pdf: voc.dvi
 	dvipdfm $<

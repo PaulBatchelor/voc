@@ -183,7 +183,9 @@ free(foo);
 /* user data. */
 typedef struct {
     int bar;
-} foo_data;
+} foo_data; @/
+
+@<Permut...@>
 
 @ A dynamically loaded sporth unit-generated such as the one defined here 
 needs to have a globally accessible function called |sporth_return_ugen|. 
