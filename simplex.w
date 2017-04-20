@@ -10,11 +10,11 @@ As it fortunately turns out, there already exists a MIT-licensed C++ implementat
 the Simplex Noise algorithm by Sebastian Rombauts. 
 However, since it is in C++, the implementation 
 is not suitable for the strictly ANSI-C code restrictions forced here. 
-Since the Simplex Class is rather small, and the needs are only for the
+Since the Class is rather small, and the needs are only for the
 one-dimensional case, converting the code needed is a relatively straight-forward 
 task.
 
-A great thing about this particular simplex implementation is that it is 
+A great thing about this particular implementation is that it is 
 very well-documented using Doxygen-style in-line comments. These comments
 will be preserved whenever possible. Displayed below is the header:
 
@@ -31,9 +31,12 @@ were implemented from scratch by me from Ken Perlin's text.
 
 
 @<Simplex Noise Algorithm (one-dimensional)@> =
-@<Helper Function to Compute Gradients-Dot-Residual Vectors@>
+@<Helper Functions for the ...@>@/
+@<Noise Subroutine@>@/
 
-@ Part of the simplex algorithm relies on table lookup. Comments in the code
+@ \subsec{Permutation Table}
+
+Part of the simplex algorithm relies on table lookup. Comments in the code
 refer to it as a {\it permutation table}:
 
 \begincodecomment
@@ -76,17 +79,113 @@ static const uint8_t perm[256] = {
 93, 222, 114, 67, 29, 24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180
 };
 
+@ \subsec{Helper Functions}
+
+A number of small helper functions are part of the original implementation and
+will described in this section. In later iterations of this program, they may be dissolved
+back into the main subroutine. 
+
+@<Helper Functions for the Simplex Noise Subroutine@>=
+@<Fast Floor Subroutine@>@/
+@<Helper Function to Compute Gradients-Dot-Residual Vectors@>@/
+@<Hash Function@>@/
+
 @ The function |grad| is a helper function for the simplex noise algorithm.
 The descriptions of the function variables come from the original 
 code documentation:
 \item{$\bullet$} {\it hash} is the hash value.
-\item{$\bullet$} {\it x} is x-coordinate distance to the corner.
-\item{$\bullet$} {\it y} is y-coordinate distance to the corner.
+\item{$\bullet$} {\it x} is distance to the corner.
+
+A note in the comments:
+\begincodecomment
+These generate gradients of more than unit length. To make
+a close match with the value range of classic Perlin noise, the final
+noise values need to be rescaled to fit nicely within [-1,1].
+(The simplex noise functions as such also have different scaling.)
+Note also that these noise functions are the most practical and useful
+signed version of Perlin noise.
+\endcodecomment
 
 @<Helper Function to ...@>=
-static float grad(int32_t hash, float x, float y) {
-    int32_t h = hash & 0x3F;  /* Convert low 3 bits of hash code */
-    float u = h < 4 ? x : y;  /* into 8 simple gradient directions, */
-    float v = h < 4 ? y : x;  /* and compute the dot product with (x,y). */
-    return ((h & 1) ? -u : u) + ((h & 2) ? -2.0f*v : 2.0f*v);
+
+static float grad(int32_t hash, float x) {
+    int32_t h = hash & 0x0F;        /* Convert low 4 bits of hash code */
+    float grad = 1.0f + (h & 7);    /* Gradient value 1.0, 2.0, ..., 8.0 */
+    if ((h & 8) != 0) grad = -grad; /* Set a random sign for the gradient */
+    return (grad * x);            /* Multiply the gradient with the distance*/
+}
+
+@ A helper function for hashing is needed for the Simplex noise algorithm. 
+It is designed to be a wrapper around the |@<Permutation Table@>|. The function
+takes in a single 32-bit integer value to be hashed.
+
+\begincodecomment
+This inline function costs around 1ns, and is called N+1 times for a noise of N 
+dimension.
+
+Using a real hash function would be better to improve the "repeatability of 256" 
+of the above permutation table,
+but fast integer Hash functions uses more time and have bad random properties.
+\endcodecomment
+
+@<Hash Function@>=
+static uint8_t hash(int32_t i) {
+    return perm[(uint8_t)i];
+}
+
+@ A handrolled floor subroutine is created, and is used inside the 
+|@<Noise Subroutine@>|.
+
+\begincodecomment
+Computes the largest integer value not greater than the float one
+
+This method is faster than using |(int32_t)std::floor(fp).|
+
+I measured it to be approximately twice as fast:
+\smallskip
+float:  ~18.4ns instead of ~39.6ns on an AMD APU
+
+double: ~20.6ns instead of ~36.6ns on an AMD APU,
+\smallskip
+Reference: 
+
+{\it http://www.codeproject.com/Tips/700780/Fast-floor-ceiling-functions}
+\endcodecomment
+@<Fast Floor...@>=
+static int32_t fastfloor(float fp) {
+    int32_t i = (int32_t)fp;
+    return (fp < i) ? (i - 1) : (i);
+}
+
+@ \subsec{The Main Subroutine}
+
+The main subroutine for producing one-dimensional simplex noise is displayed
+below. One neat thing about it is that it is stateless, making it thread-safe
+by definition.
+
+\begincodecomment
+The maximum value of this noise is $8*(3/4)^4 = 2.53125$ A factor of 0.395 
+scales to fit exactly within [-1,1]
+\endcodecomment
+
+@<Noise Subroutine@>=
+static float simplex_noise1d(float x) {
+    float n0, n1;   
+
+    int32_t i0 = fastfloor(x);
+    int32_t i1 = i0 + 1;
+
+    float x0 = x - i0;
+    float x1 = x0 - 1.0f;
+
+    float t0 = 1.0f - x0*x0;
+
+    t0 *= t0;
+    n0 = t0 * t0 * grad(hash(i0), x0);
+
+    float t1 = 1.0f - x1*x1;
+    t1 *= t1;
+    n1 = t1 * t1 * grad(hash(i1), x1);
+
+    return 0.395f * (n0 + n1);
 }
