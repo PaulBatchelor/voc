@@ -1,5 +1,6 @@
 \input macros
 \input btxmac 
+
 \startcenter
 {\bigfont Voc}
 
@@ -26,7 +27,7 @@ The goal of {\it Voc} is to provide a low level model for producing utterances
 and phonemes. It will neither attempt to sing or talk, but it will babble
 and chatter. A program which is closely aligned with Voc's scope is Neil 
 Thapen's web application 
-{\it Pink Trombone}. % TODO: SITE THIS 
+{\it Pink Trombone}. \cite{pinktrombone} 
 In this program, vocal phonemes are generated through directly manipulating a 
 virtual vocal tract in continuous time. 
 
@@ -34,8 +35,8 @@ virtual vocal tract in continuous time.
 \subsec{Literate Programming}
 
 As an experiment, the author has decided to use {\it literate programming} for
-this project. Literate programming, created by Donald Knuth, is the concept
-of melting documentation and code together. What you are reading is also a 
+this project. Literate programming, created by Donald Knuth \cite{knuth1992literate}, 
+is the concept of melting documentation and code together. What you are reading is also a 
 program! 
 
 The biggest advantage of using literate programming for this project is the
@@ -43,7 +44,7 @@ ability to use mathematical notation to describe concepts that are implemented.
 The C-language does not lend itself well for comprehensibility when it comes
 to DSP, even with comments. Nobody ever learned about DSP from C code alone! 
 A very successful example of literate programming is the book {\it Physically Based
-Rendering}, which is both a text book and software implementation of a 
+Rendering} \cite{pbrt}, which is both a text book and software implementation of a 
 physically accurate ray tracer. 
 
 The underlying technology used here is CWEB, the definitive literate programming 
@@ -58,6 +59,7 @@ the following components:
 
 @c
 @<Headers@>@/
+@<Simplex...@>@/
 @<The Sporth Unit Generator Function@>@/
 @<Return Function@>@/
 
@@ -192,3 +194,9 @@ All this function needs to do is return the ugen function, which is of type
 {
     return sporth_gain;
 }
+
+@i simplex
+
+@* References.
+\bibliography{ref}
+\bibliographystyle{plain}

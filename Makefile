@@ -8,10 +8,11 @@ SP=sp/test.tex
 
 program: voc.so
 
-voc.tex: voc.w $(SP) macros.tex
+voc.tex: voc.w $(SP) macros.tex simplex.w
 	cweave -x voc.w
 
 voc.dvi: voc.tex 
+	bibtex voc
 	tex "\let\pdf+ \input voc"
 
 voc.pdf: voc.dvi
@@ -34,3 +35,4 @@ clean:
 	rm -rf *.c
 	rm -rf $(SP)
 	rm -rf voc.so
+	rm -rf *.aux *.bbl *.blg
