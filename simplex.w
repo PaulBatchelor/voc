@@ -31,6 +31,7 @@ were implemented from scratch by me from Ken Perlin's text.
 
 
 @<Simplex Noise Algorithm (one-dimensional)@> =
+@<Helper Function to Compute Gradients-Dot-Residual Vectors@>
 
 @ Part of the simplex algorithm relies on table lookup. Comments in the code
 refer to it as a {\it permutation table}:
@@ -74,3 +75,18 @@ static const uint8_t perm[256] = {
 106, 157, 184, 84, 204, 176, 115, 121, 50, 45, 127, 4, 150, 254, 138, 236, 205, 
 93, 222, 114, 67, 29, 24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180
 };
+
+@ The function |grad| is a helper function for the simplex noise algorithm.
+The descriptions of the function variables come from the original 
+code documentation:
+\item{$\bullet$} {\it hash} is the hash value.
+\item{$\bullet$} {\it x} is x-coordinate distance to the corner.
+\item{$\bullet$} {\it y} is y-coordinate distance to the corner.
+
+@<Helper Function to ...@>=
+static float grad(int32_t hash, float x, float y) {
+    int32_t h = hash & 0x3F;  /* Convert low 3 bits of hash code */
+    float u = h < 4 ? x : y;  /* into 8 simple gradient directions, */
+    float v = h < 4 ? y : x;  /* and compute the dot product with (x,y). */
+    return ((h & 1) ? -u : u) + ((h & 2) ? -2.0f*v : 2.0f*v);
+}

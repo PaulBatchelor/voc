@@ -18,7 +18,7 @@ voc.dvi: voc.tex
 voc.pdf: voc.dvi
 	dvipdfm $<
 
-voc.c: voc.w
+voc.c: voc.w simplex.w
 	ctangle $<
 
 %.o: %.c
