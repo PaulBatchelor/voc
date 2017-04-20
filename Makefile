@@ -1,5 +1,5 @@
 OBJ=voc.c
-CFLAGS=-fPIC
+CFLAGS=-fPIC -Wall -ansi
 LDFLAGS=-lsporth -lsoundpipe -lsndfile -lm -lpthread
 
 default: voc.pdf 
