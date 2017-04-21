@@ -108,7 +108,8 @@ signed version of Perlin noise.
 
 @<Helper Function to ...@>=
 
-static float grad(int32_t hash, float x) {
+static float grad(int32_t hash, float x) 
+{
     int32_t h = hash & 0x0F;        /* Convert low 4 bits of hash code */
     float grad = 1.0f + (h & 7);    /* Gradient value 1.0, 2.0, ..., 8.0 */
     if ((h & 8) != 0) grad = -grad; /* Set a random sign for the gradient */
@@ -152,7 +153,8 @@ Reference:
 {\it http://www.codeproject.com/Tips/700780/Fast-floor-ceiling-functions}
 \endcodecomment
 @<Fast Floor...@>=
-static int32_t fastfloor(float fp) {
+static int32_t fastfloor(float fp) 
+{
     int32_t i = (int32_t)fp;
     return (fp < i) ? (i - 1) : (i);
 }
@@ -160,32 +162,51 @@ static int32_t fastfloor(float fp) {
 @ \subsec{The Main Subroutine}
 
 The main subroutine for producing one-dimensional simplex noise is displayed
-below. One neat thing about it is that it is stateless, making it thread-safe
-by definition.
+below. It takes only one input value, which is referred to as the "input"
+coordinate in the original comments.
+One neat thing about it is that it is stateless, making it thread-safe
+by definition. 
 
 \begincodecomment
 The maximum value of this noise is $8*(3/4)^4 = 2.53125$ A factor of 0.395 
 scales to fit exactly within [-1,1]
 \endcodecomment
 
+The routine itself for the one dimensional case is only a handful of lines 
+(skewing is not needed). 
+Using the comments from the original code, the procedure can be described
+in the following way:
+\medskip
+\item{1.} Calculate corners coordinates |i0| and |i1| (nearest integer values).
+\item{2.} Find distance to corners with |x0| and |x1|.
+\item{3.} Calculate contribution from first and second corners with
+|t0| and |t1|, respectively.
+\item{4.} Calculate the noise factors |n0| and |n1|.
+\item{5.} Multiply and scale so that output is in range $[-1, 1]$.
+\medskip
+
 @<Noise Subroutine@>=
-static float simplex_noise1d(float x) {
-    float n0, n1;   
-
-    int32_t i0 = fastfloor(x);
-    int32_t i1 = i0 + 1;
-
-    float x0 = x - i0;
-    float x1 = x0 - 1.0f;
-
-    float t0 = 1.0f - x0*x0;
-
+static float simplex_noise1d(float x) 
+{
+    float n0, n1;
+    float x0, x1;
+    float t0, t1;
+    int32_t i0, i1; 
+@|
+    i0 = fastfloor(x);
+    i1 = i0 + 1; 
+@|
+    x0 = x - i0;
+    x1 = x0 - 1.0f;
+@|
+    t0 = 1.0f - x0*x0;
     t0 *= t0;
     n0 = t0 * t0 * grad(hash(i0), x0);
-
-    float t1 = 1.0f - x1*x1;
+@|
+    t1 = 1.0f - x1*x1;
     t1 *= t1;
     n1 = t1 * t1 * grad(hash(i1), x1);
-
+@|
     return 0.395f * (n0 + n1);
 }
+
