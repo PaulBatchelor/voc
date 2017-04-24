@@ -134,6 +134,9 @@ static int sporth_gain(plumber_data *pd, sporth_stack *stack, void **ud)
 The first state executed is {\bf creation}, denoted by the macro 
 |PLUMBER_CREATE|. This is the state where memory is allocated, tables are
 created and stack arguments are checked for validity. 
+
+It is here that the top-level function |@<Voc Crea...@>| is called.
+
 @<Creation@>=
 
 if(sporth_check_args(stack, "ff") != SPORTH_OK) {@/
@@ -155,6 +158,8 @@ involving delay lines with user-specified sizes. For this reason, it is
 typically not safe to call this twice for reinitialization. (The author admits
 that this is not an ideal design choice.)
 
+It is here that the top-level function |@<Voc Init...@>| is called.
+
 @<Init...@>=
 voc = *ud;
 in = sporth_stack_pop_float(stack);
@@ -168,6 +173,8 @@ audio loop. Generally speaking, this is where a Ugen will process audio.
 In this state, strings in this callback are ignored; only 
 floating point values are pushed and popped.
 
+It is here that the top-level function |@<Voc Comp...@>| is called.
+
 @<Computation@>=
 voc = *ud;
 in = sporth_stack_pop_float(stack);
@@ -178,6 +185,8 @@ sporth_stack_push_float(stack, out);
 @ The fourth and final state in a Sporth ugen is {\bf Destruction}, denoted
 by |PLUMBER_DESTROY|.  Any memory allocated in |PLUMBER_CREATE| 
 should be consequently freed here. 
+
+It is here that the top-level function |@<Voc Dest...@>| is called.
 @<Destruction@>=
 voc = *ud;
 sp_voc_destroy(&voc);
