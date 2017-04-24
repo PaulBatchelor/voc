@@ -2,13 +2,15 @@ OBJ=voc.c
 CFLAGS=-fPIC -Wall -ansi
 LDFLAGS=-lsporth -lsoundpipe -lsndfile -lm -lpthread
 
+WEB=simplex.w data.w top.w
+
 default: voc.pdf 
 
 SP=sp/test.tex
 
 program: voc.so
 
-voc.tex: voc.w $(SP) macros.tex simplex.w
+voc.tex: voc.w $(SP) macros.tex $(WEB)
 	cweave -x voc.w
 
 voc.dvi: voc.tex 
@@ -18,7 +20,7 @@ voc.dvi: voc.tex
 voc.pdf: voc.dvi
 	dvipdfm $<
 
-voc.c: voc.w simplex.w
+voc.c: voc.w $(WEB)
 	ctangle $<
 
 %.o: %.c

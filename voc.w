@@ -61,6 +61,7 @@ the following components:
 @<Headers@>@/
 @<Simplex...@>@/
 @<The Sporth Unit Generator Function@>@/
+@<Top Level...@>@/
 @<Return Function@>@/
 
 @* External Sporth UGens.
@@ -108,8 +109,8 @@ These states are executed in order:
 
 static int sporth_gain(plumber_data *pd, sporth_stack *stack, void **ud)
 {
-    foo_data *foo;
-    SPFLOAT gain, in;
+    sp_voc *voc;
+    SPFLOAT gain, in, out;
     switch(pd->mode) {
         case PLUMBER_CREATE:
             @<Creation@>;
@@ -140,8 +141,9 @@ if(sporth_check_args(stack, "ff") != SPORTH_OK) {@/
     stack->error++;@/
     return PLUMBER_NOTOK;@/
 }@/
-foo = malloc(sizeof(foo_data)); /* malloc and assign address to user data */
-*ud = foo;
+
+sp_voc_create(&voc);
+*ud = voc;
 sporth_stack_pop_float(stack);
 sporth_stack_pop_float(stack);
 sporth_stack_push_float(stack, 0.0);
@@ -154,8 +156,10 @@ typically not safe to call this twice for reinitialization. (The author admits
 that this is not an ideal design choice.)
 
 @<Init...@>=
+voc = *ud;
 in = sporth_stack_pop_float(stack);
 gain = sporth_stack_pop_float(stack);
+sp_voc_init(pd->sp, voc);
 sporth_stack_push_float(stack, in * gain);
 
 @ The third state executed is {\bf computation}, denoted by the macro 
@@ -165,27 +169,29 @@ In this state, strings in this callback are ignored; only
 floating point values are pushed and popped.
 
 @<Computation@>=
+voc = *ud;
 in = sporth_stack_pop_float(stack);
 gain = sporth_stack_pop_float(stack);
-sporth_stack_push_float(stack, in * gain);
+sp_voc_compute(pd->sp, voc, &out);
+sporth_stack_push_float(stack, out);
 
 @ The fourth and final state in a Sporth ugen is {\bf Destruction}, denoted
 by |PLUMBER_DESTROY|.  Any memory allocated in |PLUMBER_CREATE| 
 should be consequently freed here. 
 @<Destruction@>=
-foo = *ud;
-free(foo);
+voc = *ud;
+sp_voc_destroy(&voc);
 
 @ @<Headers@>=
 #include <stdlib.h>
 #include <soundpipe.h>
 #include <sporth.h>
-/* user data. */
-typedef struct {
-    int bar;
-} foo_data; @/
+
+#include "voc.h"
 
 @<Permut...@>
+
+@<Voc Main...@>
 
 @ A dynamically loaded sporth unit-generated such as the one defined here 
 needs to have a globally accessible function called |sporth_return_ugen|. 
@@ -198,6 +204,10 @@ All this function needs to do is return the ugen function, which is of type
 }
 
 @i simplex
+
+@i data
+
+@i top
 
 @* References.
 \bibliography{ref}
