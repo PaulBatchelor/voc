@@ -2,7 +2,7 @@ OBJ=voc.c
 CFLAGS=-fPIC -Wall -ansi
 LDFLAGS=-lsporth -lsoundpipe -lsndfile -lm -lpthread
 
-WEB=simplex.w data.w top.w ugen.w glottis.w
+WEB=data.w top.w ugen.w glottis.w
 
 default: voc.pdf 
 

@@ -59,9 +59,8 @@ the following components:
 
 @c
 @<Headers@>@/
-@<Simplex...@>@/
+@<The Glottis@>@/
 @<Top Level...@>@/
-@<Glottis Top@>@/
 @<The Sporth Unit Generator Function@>@/
 @<Return Function@>@/
 
@@ -93,9 +92,7 @@ equivalent.
 
 #include "voc.h"
 
-@<Permut...@>
-
-@<Voc Main...@>
+@<Data Structures@>
 
 @ A dynamically loaded sporth unit-generated such as the one defined here 
 needs to have a globally accessible function called |sporth_return_ugen|. 
@@ -106,8 +103,6 @@ All this function needs to do is return the ugen function, which is of type
 {
     return sporth_gain;
 }
-
-@i simplex
 
 @i data
 

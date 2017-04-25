@@ -23,12 +23,13 @@ int sp_voc_destroy(sp_voc **voc)
 @ @<Voc Initialization@>=
 int sp_voc_init(sp_data *sp, sp_voc *voc)
 {
+    glottis_init(&voc->glot); /* initialize glottis */
     return SP_OK;
 }
 
 @ @<Voc Compute@>=
 int sp_voc_compute(sp_data *sp, sp_voc *voc, SPFLOAT *out)
 {
-    *out = 0.0;
+    *out = glottis_compute(&voc->glot);
     return SP_OK;
 }
