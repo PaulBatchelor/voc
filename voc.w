@@ -60,8 +60,9 @@ the following components:
 @c
 @<Headers@>@/
 @<Simplex...@>@/
-@<The Sporth Unit Generator Function@>@/
 @<Top Level...@>@/
+@<Glottis Top@>@/
+@<The Sporth Unit Generator Function@>@/
 @<Return Function@>@/
 
 @* External Sporth UGens.
@@ -111,6 +112,8 @@ All this function needs to do is return the ugen function, which is of type
 @i data
 
 @i top
+
+@i glottis
 
 @* References.
 \bibliography{ref}
