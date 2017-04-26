@@ -1,7 +1,7 @@
 @* Data Structures.
 This section contains all the data created by voc.
 
-@<Data Structures@>=
+@<Data Structures and C Structs@>=
 @<Glottis Data...@>@/
 @<Voc Main...@>@/
 

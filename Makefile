@@ -2,7 +2,7 @@ OBJ=voc.c
 CFLAGS=-fPIC -Wall -ansi
 LDFLAGS=-lsporth -lsoundpipe -lsndfile -lm -lpthread
 
-WEB=data.w top.w ugen.w glottis.w
+WEB=data.w top.w ugen.w glottis.w header.w
 
 default: voc.pdf 
 
@@ -20,7 +20,7 @@ voc.dvi: voc.tex
 voc.pdf: voc.dvi
 	dvipdfm $<
 
-voc.c: voc.w $(WEB)
+voc.c: voc.w $(WEB) 
 	ctangle $<
 
 %.o: %.c
@@ -38,3 +38,4 @@ clean:
 	rm -rf $(SP)
 	rm -rf voc.so
 	rm -rf *.aux *.bbl *.blg
+	rm -rf voc.h
