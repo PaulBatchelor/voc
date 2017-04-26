@@ -14,20 +14,54 @@ LF-model\cite{lu2000glottal}.
 @ Initializiation of the glottis is done inside of |glottis_init|. 
 
 @<Glottis Initialization@>=
-static void glottis_init(glottis *glot)
+static void glottis_init(glottis *glot, SPFLOAT sr)
 {
     glot->freq = 140; /* 140Hz frequency by default */
     glot->tenseness = 0.6; /* value between 0 and 1 */
-
+    glot->T = 1.0/sr; /* big T */
     glottis_setup_waveform(glot);
 }
 
 @ This is where a single sample of audio is computed for the glottis
 
+% TODO: implement intensity and loudness, if needed
+% out = out * glot->intensity * glot->loudness;
+
 @<Glottis Computation@>=
-static SPFLOAT glottis_compute(glottis *glot)
+static SPFLOAT glottis_compute(sp_data *sp, glottis *glot)
 {
-    return 0.0;
+    SPFLOAT out;
+    SPFLOAT aspiration;
+    SPFLOAT noise;
+    SPFLOAT t;
+    SPFLOAT intensity;
+
+    intensity = 1.0;
+    glot->time_in_waveform += glot->T;
+
+    if(glot->time_in_waveform > glot->waveform_length) {
+        glot->time_in_waveform -= glot->waveform_length;
+        glottis_setup_waveform(glot);
+
+    }
+
+    t = (glot->time_in_waveform / glot->waveform_length);
+
+    if(t > glot->Te) {
+        out = (-exp(-glot->epsilon * (t-glot->Te)) + glot->shift) / glot->delta;
+    } else {
+        out = glot->E0 * exp(glot->alpha * t) * sin(glot->omega * t);
+    }
+
+    noise = 2.0 * ((SPFLOAT) sp_rand(sp) / SP_RANDMAX) - 1;
+
+    aspiration = intensity * (1 - sqrt(glot->tenseness)) * 0.3 * noise;
+
+    aspiration *= 0.2;
+
+    out += aspiration;
+
+    return out;
 }
 
 @ The function |glottis_setup_waveform| is tasked with creating the

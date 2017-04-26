@@ -24,7 +24,7 @@ These states are executed in order:
 static int sporth_gain(plumber_data *pd, sporth_stack *stack, void **ud)
 {
     sp_voc *voc;
-    SPFLOAT gain, in, out;
+    SPFLOAT out;
     switch(pd->mode) {
         case PLUMBER_CREATE:
             @<Creation@>;
@@ -53,16 +53,8 @@ It is here that the top-level function |@<Voc Crea...@>| is called.
 
 @<Creation@>=
 
-if(sporth_check_args(stack, "ff") != SPORTH_OK) {@/
-    fprintf(stderr,"Not enough arguments for gain\n");@/
-    stack->error++;@/
-    return PLUMBER_NOTOK;@/
-}@/
-
 sp_voc_create(&voc);
 *ud = voc;
-sporth_stack_pop_float(stack);
-sporth_stack_pop_float(stack);
 sporth_stack_push_float(stack, 0.0);
 
 @ The second state executed is {\bf initialization}, denoted by the macro 
@@ -76,10 +68,8 @@ It is here that the top-level function |@<Voc Init...@>| is called.
 
 @<Init...@>=
 voc = *ud;
-in = sporth_stack_pop_float(stack);
-gain = sporth_stack_pop_float(stack);
 sp_voc_init(pd->sp, voc);
-sporth_stack_push_float(stack, in * gain);
+sporth_stack_push_float(stack, 0.0);
 
 @ The third state executed is {\bf computation}, denoted by the macro 
 |PLUMBER_COMPUTE|. This state happens during Sporth runtime in the
@@ -91,8 +81,6 @@ It is here that the top-level function |@<Voc Comp...@>| is called.
 
 @<Computation@>=
 voc = *ud;
-in = sporth_stack_pop_float(stack);
-gain = sporth_stack_pop_float(stack);
 sp_voc_compute(pd->sp, voc, &out);
 sporth_stack_push_float(stack, out);
 

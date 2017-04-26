@@ -25,6 +25,10 @@ range $[0,1]$.
 \item{$\bullet$} |Rd| % is what?
 \item{$\bullet$} |waveform_length| provides the period length (in seconds) of
 the fundamental frequency, in seconds.
+\item{$\bullet$} The waveform position is kept track of in |time_in_waveform|,
+in seconds.
+
+
 
 @<Glottis Data Structure@>=
 
@@ -33,6 +37,7 @@ typedef struct {
     SPFLOAT @, tenseness; 
     SPFLOAT @, Rd; 
     SPFLOAT @, waveform_length; 
+    SPFLOAT @, time_in_waveform;
 
     SPFLOAT @, alpha;
     SPFLOAT @, E0;
@@ -41,4 +46,6 @@ typedef struct {
     SPFLOAT @, delta;
     SPFLOAT @, Te;
     SPFLOAT @, omega;
+
+    SPFLOAT @, T;
 } glottis;
