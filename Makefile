@@ -4,6 +4,10 @@ LDFLAGS=-lsporth -lsoundpipe -lsndfile -lm -lpthread
 
 WEB=data.w top.w ugen.w glottis.w header.w debug.w
 
+CONFIG?=
+
+include $(CONFIG)
+
 default: voc.pdf 
 
 SP=sp/test.tex
