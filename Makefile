@@ -2,7 +2,7 @@ OBJ=voc.c
 CFLAGS=-fPIC -Wall -ansi -g
 LDFLAGS=-lsporth -lsoundpipe -lsndfile -lm -lpthread
 
-WEB=data.w top.w ugen.w glottis.w header.w
+WEB=data.w top.w ugen.w glottis.w header.w debug.w
 
 default: voc.pdf 
 
@@ -22,6 +22,8 @@ voc.pdf: voc.dvi
 
 voc.c: voc.w $(WEB) 
 	ctangle $<
+
+debug.c: voc.c
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@

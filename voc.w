@@ -128,6 +128,8 @@ All this function needs to do is return the ugen function, which is of type
 @i glottis
 
 @i header 
+
+@i debug
 @* References.
 \bibliography{ref}
 \bibliographystyle{plain}
