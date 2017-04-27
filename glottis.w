@@ -37,6 +37,7 @@ static SPFLOAT glottis_compute(sp_data *sp, glottis *glot)
     SPFLOAT t;
     SPFLOAT intensity;
 
+    out = 0;
     intensity = 1.0;
     glot->time_in_waveform += glot->T;
 
@@ -118,7 +119,7 @@ static void glottis_setup_waveform(glottis *glot)
     rhs_integral = (1/epsilon) * (shift-1) + (1-Te)*shift;
     rhs_integral = rhs_integral / delta;
 
-    lower_integral = (Te - Tp) * 0.5 + rhs_integral;
+    lower_integral = - (Te - Tp) / 2 + rhs_integral;
     upper_integral = -lower_integral;
 
     omega = M_PI / Tp;

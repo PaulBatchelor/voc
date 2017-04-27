@@ -16,7 +16,7 @@ static void process(sp_data *sp, void *ud)
 
     sp_voc_compute(sp, voc, &out);
 
-    sp_out(sp, 0, out);
+    sp_out(sp, 0, out * 0.3);
 }
 
 int main(int argc, char *argv[])
@@ -25,14 +25,13 @@ int main(int argc, char *argv[])
     sp_data *sp;
 
     sp_create(&sp);
-    sp->len = 4410;
+    sp->len = 44100;
     sp_voc_create(&voc);
-
     sp_voc_init(sp, voc);
-
-    sp_process_plot(sp, voc, process);
-
+    @q sp_process_plot(sp, voc, process); @>
+    sp_process(sp, voc, process);@/
     sp_voc_destroy(&voc);
     sp_destroy(&sp);
     return 0;
 }
+
