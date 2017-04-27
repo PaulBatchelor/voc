@@ -48,15 +48,19 @@ static SPFLOAT glottis_compute(sp_data *sp, glottis *glot)
     }
 
     t = (glot->time_in_waveform / glot->waveform_length);
-
+@q PT: normalizedLFWaveform @>
     if(t > glot->Te) {
         out = (-exp(-glot->epsilon * (t-glot->Te)) + glot->shift) / glot->delta;
     } else {
         out = glot->E0 * exp(glot->alpha * t) * sin(glot->omega * t);
     }
 
+@q out = out * glot->intensity * glot->loudness @>
+
+@q generate white noise source @>
     noise = 2.0 * ((SPFLOAT) sp_rand(sp) / SP_RANDMAX) - 1;
 
+@q intensity set to 1.0 for now @>
     aspiration = intensity * (1 - sqrt(glot->tenseness)) * 0.3 * noise;
 
     aspiration *= 0.2;
@@ -108,15 +112,15 @@ static void glottis_setup_waveform(glottis *glot)
     Rg = (Rk/4)*(0.5 + 1.2*Rk)/(0.11*Rd-Ra*(0.5+1.2*Rk));
 
     Ta = Ra;
-    Tp = 1 / (2*Rg);
+    Tp = (SPFLOAT)1.0 / (2*Rg);
     Te = Tp + Tp*Rk;
 
-    epsilon = 1 / Ta;
+    epsilon = (SPFLOAT)1.0 / Ta;
 
     shift = exp(-epsilon * (1 - Te));
     delta = 1 - shift;
 
-    rhs_integral = (1/epsilon) * (shift-1) + (1-Te)*shift;
+    rhs_integral = (SPFLOAT)(1.0/epsilon) * (shift-1) + (1-Te)*shift;
     rhs_integral = rhs_integral / delta;
 
     lower_integral = - (Te - Tp) / 2 + rhs_integral;
@@ -132,7 +136,7 @@ static void glottis_setup_waveform(glottis *glot)
 
     glot->alpha = alpha;
     glot->E0 = E0;
-    glot->epsilon = 0;
+    glot->epsilon = epsilon;
     glot->shift = shift;
     glot->delta = delta;
     glot->Te = Te;
