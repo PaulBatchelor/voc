@@ -1,5 +1,5 @@
 OBJ=voc.c
-CFLAGS=-fPIC -Wall -ansi
+CFLAGS=-fPIC -Wall -ansi -g
 LDFLAGS=-lsporth -lsoundpipe -lsndfile -lm -lpthread
 
 WEB=data.w top.w ugen.w glottis.w header.w
@@ -32,6 +32,9 @@ sp/%.tex:sp/%.sp
 voc.so: $(OBJ)
 	$(CC) $(CFLAGS) -shared $(OBJ) -o $@ $(LDFLAGS)
 
+debug: debug.o voc.o
+	$(CC) $(CFLAGS) debug.o voc.o -o $@ $(LDFLAGS)
+
 clean:
 	rm -rf voc.tex *.dvi *.idx *.log *.pdf *.sc *.toc *.scn 
 	rm -rf *.c
@@ -39,3 +42,5 @@ clean:
 	rm -rf voc.so
 	rm -rf *.aux *.bbl *.blg
 	rm -rf voc.h
+	rm -rf debug
+	rm -rf *.o

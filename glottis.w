@@ -19,6 +19,7 @@ static void glottis_init(glottis *glot, SPFLOAT sr)
     glot->freq = 140; /* 140Hz frequency by default */
     glot->tenseness = 0.6; /* value between 0 and 1 */
     glot->T = 1.0/sr; /* big T */
+    glot->time_in_waveform = 0;
     glottis_setup_waveform(glot);
 }
 
