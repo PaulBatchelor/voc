@@ -141,7 +141,7 @@ Rd = glot->Rd;
 if(Rd < 0.5) Rd = 0.5;
 if(Rd > 2.7) Rd = 2.7;
 
-@ $R_d$ can be used to calculate predictions $R_a$, $R_g$, and $R_k$. 
+@ $R_d$ can be used to calculate appriximations for $R_a$, $R_g$, and $R_k$. 
 The equations described below have been derived using linear regression. 
 $$R_{ap} = (-1 + 4.8R_d)/100$$
 $$R_{kp} = (22.4 + 11.8R_d)/100$$
@@ -153,6 +153,7 @@ $$R_d = (1/0.11)(0.5 + 1.2R_{k})(R_k / 4R_g + R_a)$$
 
 Which yields:
 % TODO: extract \frac from eplain
+% TODO: work out this algebraic equation
 $$R_{gp} = (R_{kp}/4)(0.5 + 1.2R_{kp})/(0.11R_d - R_{ap}*(0.5+1.2R_{kp}))$$
 
 @<Derive $R_a$, $R_k$, and $R_g$@>=
@@ -160,7 +161,14 @@ Ra = -0.01 + 0.048*Rd;
 Rk = 0.224 + 0.118*Rd;
 Rg = (Rk/4)*(0.5 + 1.2*Rk)/(0.11*Rd-Ra*(0.5+1.2*Rk));
 
-@ @<Derive $T_a$, $T_p$, and $T_e$@>=
+@ The parameters approximating $R_a$, $R_g$, and $R_k$ can be used to 
+calculate the timing parameters $T_a$, $T_p$, and $T_e$ in the LF model:
+
+$$T_a = R_{ap}$$ 
+$$T_p = 2R_{gp}^{-1}$$ 
+$$T_e = T_p + T_pR_{kp}$$
+
+@<Derive $T_a$, $T_p$, and $T_e$@>=
 Ta = Ra;
 Tp = (SPFLOAT)1.0 / (2*Rg);
 Te = Tp + Tp*Rk;
