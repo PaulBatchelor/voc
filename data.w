@@ -28,7 +28,15 @@ the fundamental frequency, in seconds.
 \item{$\bullet$} The waveform position is kept track of in |time_in_waveform|,
 in seconds.
 
-
+% TODO: describe what these variables are
+\item{$\bullet$} |alpha|
+\item{$\bullet$} |E0|
+\item{$\bullet$} |epsilon|
+\item{$\bullet$} |shift|
+\item{$\bullet$} |delta|
+\item{$\bullet$} |Te|
+\item{$\bullet$} |omega|
+\item{$\bullet$} |T|
 
 @<Glottis Data Structure@>=
 
