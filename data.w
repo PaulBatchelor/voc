@@ -3,6 +3,7 @@ This section contains all the data needed by Voc.
 
 @<Data Structures and C Structs@>=
 @<Glottis Data...@>@/
+@<Tract Data...@>@/
 @<Voc Main...@>@/
 
 @ The top-most data structure is |sp_voc|, designed to be an opaque
@@ -13,6 +14,7 @@ Like all Soundpipe modules, this struct has the prefix "sp".
 
 struct sp_voc {
     glottis @, glot; /*The Glottis*/
+    tract @, tr; /*The Vocal Tract */
 };
 
 @ The glottis data structure contains all the variables used by the glottis.
@@ -63,5 +65,6 @@ typedef struct {
 @<Tract Data@>=
 typedef struct {
     int n; 
+    @t \indent n is the size, set to 44. @> @/
 } tract;
 

@@ -32,12 +32,17 @@ int sp_voc_destroy(sp_voc **voc)
 int sp_voc_init(sp_data *sp, sp_voc *voc)
 {
     glottis_init(&voc->glot, sp->sr); /* initialize glottis */
+    tract_init(sp, &voc->tr); /* initialize vocal tract */
     return SP_OK;
 }
 
 @ @<Voc Compute@>=
 int sp_voc_compute(sp_data *sp, sp_voc *voc, SPFLOAT *out)
 {
-    *out = glottis_compute(sp, &voc->glot);
+    SPFLOAT tract, glot;
+    glot = glottis_compute(sp, &voc->glot);
+    tract = tract_compute(sp, &voc->tr, glot);
+
+    *out = tract;
     return SP_OK;
 }
