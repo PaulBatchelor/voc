@@ -61,10 +61,35 @@ typedef struct {
 } glottis;
 
 @ The Tract C struct contains all the data needed for the vocal tract filter.
-
 @<Tract Data@>=
 typedef struct {
     int n; 
     @t \indent n is the size, set to 44. @> @/
+    SPFLOAT @, diameter[44];
+    SPFLOAT @, rest_diameter[44];
+    SPFLOAT @, target_diameter[44];
+    SPFLOAT @, new_diameter[44];
+    SPFLOAT @, R[44]; @t \indent component going right @>@/
+    SPFLOAT @, L[44]; @t \indent component going left @>@/
+    SPFLOAT @, reflection[45];
+    SPFLOAT @, newreflection[45];
+    SPFLOAT @, junction_outL[45];
+    SPFLOAT @, junction_outR[45];
+    SPFLOAT @, A[44];
+    SPFLOAT @, max_amplitude[44];
+    
+    int nose_length; 
+@t \indent The original code here has it at $floor(28 * n/44)$, and since @>
+@t n=44, it should be 28.@>@/
+    int nose_start; @t \indent $n - nose\_length + 1$, or 17 @>@/
+    SPFLOAT @, noseL[28];
+    SPFLOAT @, noseR[28];
+    SPFLOAT @, nose_junc_outL[29];
+    SPFLOAT @, nose_junc_outR[29];
+    SPFLOAT @, nose_reflection[29];
+    SPFLOAT @, nose_diameter[28];
+    SPFLOAT @, noseA[28];
+    SPFLOAT @, nose_max_amp[28];
+
 } tract;
 
