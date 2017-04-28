@@ -184,7 +184,12 @@ rhs_integral = rhs_integral / delta;
 lower_integral = - (Te - Tp) / 2 + rhs_integral;
 upper_integral = -lower_integral;
 
-@ @<Calculate $E_0$@>=
+@
+
+$$E_0 = -{E_e \over e^{\alpha T}\sin{\omega_g T_e}}$$
+$$\omega = {\pi \over T_p}$$
+$$\epsilon T_a = 1 - e^{-\epsilon(T_c - T_e)}$$
+@<Calculate $E_0$@>=
 omega = M_PI / Tp;
 s = sin(omega * Te);
 

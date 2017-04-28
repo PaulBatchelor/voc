@@ -92,3 +92,11 @@
     \medskip
     \endgroup
 }
+
+%  fraction routine from eplain
+
+\def\frac#1/#2{\leavevmode
+   \kern.1em \raise .5ex \hbox{\the\scriptfont0 #1}%
+   \kern-.1em $/$%
+   \kern-.15em \lower .25ex \hbox{\the\scriptfont0 #2}%
+}%
