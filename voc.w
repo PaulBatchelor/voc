@@ -60,6 +60,7 @@ the following components:
 @c
 @<Headers@>@/
 @<The Glottis@>@/
+@<The Vocal Tract@>@/
 @<Top Level...@>@/
 @<The Sporth Unit Generator Function@>@/
 @<Return Function@>@/
@@ -126,6 +127,8 @@ All this function needs to do is return the ugen function, which is of type
 @i top
 
 @i glottis
+
+@i tract
 
 @i header 
 

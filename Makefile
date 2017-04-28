@@ -2,7 +2,7 @@ OBJ=voc.c
 CFLAGS=-fPIC -Wall -ansi -g
 LDFLAGS=-lsporth -lsoundpipe -lsndfile -lm -lpthread
 
-WEB=data.w top.w ugen.w glottis.w header.w debug.w
+WEB=data.w top.w ugen.w glottis.w header.w debug.w tract.w
 
 CONFIG?=
 

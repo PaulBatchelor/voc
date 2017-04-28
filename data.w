@@ -57,3 +57,11 @@ typedef struct {
 
     SPFLOAT @, T;
 } glottis;
+
+@ The Tract C struct contains all the data needed for the vocal tract filter.
+
+@<Tract Data@>=
+typedef struct {
+    int n; 
+} tract;
+
