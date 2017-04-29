@@ -72,7 +72,7 @@ typedef struct {
     SPFLOAT @, R[44]; @t \indent component going right @>@/
     SPFLOAT @, L[44]; @t \indent component going left @>@/
     SPFLOAT @, reflection[45];
-    SPFLOAT @, newreflection[45];
+    SPFLOAT @, new_reflection[45];
     SPFLOAT @, junction_outL[45];
     SPFLOAT @, junction_outR[45];
     SPFLOAT @, A[44];
@@ -90,6 +90,16 @@ typedef struct {
     SPFLOAT @, nose_diameter[28];
     SPFLOAT @, noseA[28];
     SPFLOAT @, nose_max_amp[28];
+
+    SPFLOAT @, reflection_left;
+    SPFLOAT @, reflection_right;
+    SPFLOAT @, reflection_nose;
+    
+    SPFLOAT @, new_reflection_left;
+    SPFLOAT @, new_reflection_right;
+    SPFLOAT @, new_reflection_nose;
+
+    SPFLOAT @, velum_target;
 
 } tract;
 

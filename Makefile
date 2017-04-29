@@ -1,5 +1,5 @@
 OBJ=voc.c
-CFLAGS=-fPIC -Wall -ansi -g
+CFLAGS=-fPIC -Wall -ansi -g -pedantic
 LDFLAGS=-lsporth -lsoundpipe -lsndfile -lm -lpthread
 
 WEB=data.w top.w ugen.w glottis.w header.w debug.w tract.w
