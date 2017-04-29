@@ -101,5 +101,13 @@ typedef struct {
 
     SPFLOAT @, velum_target;
 
+    SPFLOAT @, glottal_reflection;
+    SPFLOAT @, lip_reflection;
+    SPFLOAT @, last_obstruction;
+    SPFLOAT @, fade;
+    SPFLOAT @, movement_speed; @t 15 cm/s @>@\
+    SPFLOAT @, lip_output;
+    SPFLOAT @, nose_output;
+
 } tract;
 

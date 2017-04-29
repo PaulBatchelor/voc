@@ -24,6 +24,12 @@ static void tract_init(sp_data *sp, tract *tr)
     tr->new_reflection_right= 0.0;
     tr->new_reflection_nose = 0.0;
     tr->velum_target = 0.01;
+    tr->glottal_reflection = 0.75;
+    tr->lip_reflection = -0.85;
+    tr->last_obstruction = -1;
+    tr->movement_speed = 15;
+    tr->lip_output = 0;
+    tr->nose_output = 0;
 
     memset(tr->diameter, 0, tr->n * sizeof(SPFLOAT));
     memset(tr->rest_diameter, 0, tr->n * sizeof(SPFLOAT));
@@ -78,7 +84,17 @@ static void tract_init(sp_data *sp, tract *tr)
 @<Vocal Tract Computation...@>=
 static SPFLOAT tract_compute(sp_data *sp, tract *tr, SPFLOAT in)
 {
-    return 0;
+    int update_amplitudes;
+
+    update_amplitudes = ((SPFLOAT)sp_rand(sp) / SP_RANDMAX) < 0.1;
+
+    @q track_process_transients(tr); p@>
+    @q track_add_turbulent_noise(tr); p@>
+
+    tr->junction_outR[0] = tr->L[0] * tr->glottal_reflection + in;
+    tr->junction_outL[tr->n] = tr->R[tr->n - 1] * tr->lip_reflection;
+
+    return in;
 }
 
 @
