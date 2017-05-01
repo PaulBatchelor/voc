@@ -7,6 +7,8 @@ section |@<Top Level...@>|.
 
 @(debug.c@> = 
 #include <soundpipe.h>
+#include <string.h>
+#include <stdlib.h>
 #include "voc.h"
 
 static void process(sp_data *sp, void *ud)
@@ -23,13 +25,30 @@ int main(int argc, char *argv[])
 {
     sp_voc *voc;
     sp_data *sp;
+    int type;
 
+    if(argc < 3) {
+        fprintf(stderr, "Usage: %s [plot|audio] duration (samples)\n", argv[0]);
+        exit(0);
+    }
+
+    if(!strcmp(argv[1], "plot")) {
+        type = 0;
+    } else if(!strcmp(argv[1], "audio")) {
+        type = 1;
+    } else {
+        fprintf(stderr, "Error: invalid type %s\n", argv[1]);
+    }
     sp_create(&sp);
-    sp->len = 44100;
+    sp->len = atoi(argv[2]);
     sp_voc_create(&voc);
     sp_voc_init(sp, voc);
-    sp_process_plot(sp, voc, process);
-    @q sp_process(sp, voc, process);@>@/
+
+    if(type == 0) {
+        sp_process_plot(sp, voc, process);
+    } else {
+        sp_process(sp, voc, process);
+    }
     sp_voc_destroy(&voc);
     sp_destroy(&sp);
     return 0;
