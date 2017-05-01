@@ -28,8 +28,8 @@ int main(int argc, char *argv[])
     sp->len = 44100;
     sp_voc_create(&voc);
     sp_voc_init(sp, voc);
-    @q sp_process_plot(sp, voc, process); @>
-    sp_process(sp, voc, process);@/
+    sp_process_plot(sp, voc, process);
+    @q sp_process(sp, voc, process);@>@/
     sp_voc_destroy(&voc);
     sp_destroy(&sp);
     return 0;

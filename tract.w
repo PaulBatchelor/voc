@@ -82,11 +82,10 @@ static void tract_init(sp_data *sp, tract *tr)
 
 @ 
 @<Vocal Tract Computation...@>=
-static SPFLOAT tract_compute(sp_data *sp, tract *tr, SPFLOAT in)
+static void tract_compute(sp_data *sp, tract *tr, SPFLOAT in)
 {
-    int update_amplitudes;
-
-    update_amplitudes = ((SPFLOAT)sp_rand(sp) / SP_RANDMAX) < 0.1;
+    SPFLOAT r, w;
+    int i;
 
     @q track_process_transients(tr); p@>
     @q track_add_turbulent_noise(tr); p@>
@@ -94,7 +93,43 @@ static SPFLOAT tract_compute(sp_data *sp, tract *tr, SPFLOAT in)
     tr->junction_outR[0] = tr->L[0] * tr->glottal_reflection + in;
     tr->junction_outL[tr->n] = tr->R[tr->n - 1] * tr->lip_reflection;
 
-    return in;
+    for(i = 1; i < tr->n; i++) {
+        r = tr->new_reflection[i];
+        w = r * (tr->R[i - 1] + tr->L[i]);
+        tr->junction_outL[i] = tr->R[i - 1] - w;
+        tr->junction_outR[i] = tr->L[i] + w;
+    }
+
+    i = tr->nose_start;
+    r = tr->new_reflection_left;
+    tr->junction_outL[i] = r*tr->R[i-1] + (1+r)*(tr->noseL[0]+tr->L[i]);
+    r = tr->new_reflection_right;
+    tr->junction_outR[i] = r*tr->L[i] + (1+r)*(tr->R[i-1]+tr->noseL[0]);
+    r = tr->new_reflection_nose;
+    tr->nose_junc_outR[0] = r * tr->noseL[0]+(1+r)*(tr->L[i]+tr->R[i-1]);
+
+    for(i = 0; i < tr->n; i++) {
+        tr->R[i] = tr->junction_outR[i]*0.999;
+        tr->L[i] = tr->junction_outL[i + 1]*0.999;
+    }
+
+    tr->lip_output = tr->R[tr->n - 1];
+
+    tr->nose_junc_outL[tr->nose_length] = 
+        tr->noseR[tr->nose_length-1] * tr->lip_reflection;
+
+    for(i = 1; i < tr->nose_length; i++) {
+        w = tr->nose_reflection[i] * (tr->noseR[i-1] + tr->noseL[i]);
+        tr->nose_junc_outR[i] = tr->noseR[i - 1] - w;
+        tr->nose_junc_outL[i] = tr->noseL[i] + w;
+    }
+
+    for(i = 0; i < tr->nose_length; i++) {
+        tr->noseR[i] = tr->nose_junc_outR[i];
+        tr->noseL[i] = tr->nose_junc_outL[i];
+    }
+
+    tr->nose_output = tr->noseR[tr->nose_length - 1];
 }
 
 @

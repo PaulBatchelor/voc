@@ -39,10 +39,15 @@ int sp_voc_init(sp_data *sp, sp_voc *voc)
 @ @<Voc Compute@>=
 int sp_voc_compute(sp_data *sp, sp_voc *voc, SPFLOAT *out)
 {
-    SPFLOAT tract, glot;
+    SPFLOAT vocal_output, glot;
+    vocal_output = 0;
     glot = glottis_compute(sp, &voc->glot);
-    tract = tract_compute(sp, &voc->tr, glot);
 
-    *out = tract;
+    tract_compute(sp, &voc->tr, glot);
+    vocal_output += voc->tr.lip_output + voc->tr.nose_output;
+    tract_compute(sp, &voc->tr, glot);
+    vocal_output += voc->tr.lip_output + voc->tr.nose_output;
+
+    *out = vocal_output * 0.125;
     return SP_OK;
 }
