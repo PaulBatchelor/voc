@@ -4,6 +4,7 @@ The vocal tract.
 @<The Vocal Tract@>=
 @<Calculate Vocal Tract Reflections @>@/
 @<Calculate Vocal Tract Nose Reflections @>@/
+@<Reshape Vocal Tract @>@/
 @<Vocal Tract Init...@>@/
 @<Vocal Tract Computation...@>@/
 
@@ -18,7 +19,7 @@ static void tract_init(sp_data *sp, tract *tr)
     tr->nose_start = 17;
 
     tr->reflection_left = 0.0;
-    tr->reflection_right= 0.0;
+    tr->reflection_right = 0.0;
     tr->reflection_nose = 0.0;
     tr->new_reflection_left = 0.0;
     tr->new_reflection_right= 0.0;
@@ -30,6 +31,7 @@ static void tract_init(sp_data *sp, tract *tr)
     tr->movement_speed = 15;
     tr->lip_output = 0;
     tr->nose_output = 0;
+    tr->tip_start = 32;
 
     memset(tr->diameter, 0, tr->n * sizeof(SPFLOAT));
     memset(tr->rest_diameter, 0, tr->n * sizeof(SPFLOAT));
@@ -52,6 +54,7 @@ static void tract_init(sp_data *sp, tract *tr)
     memset(tr->nose_max_amp, 0, tr->nose_length * sizeof(SPFLOAT));
 
     for(i = 0; i < tr->n; i++) {
+        diameter = 0;
         if(i < 7 * (SPFLOAT)tr->n / 44 - 0.5) {
             diameter = 0.6;
         } else if( i < 12 * (SPFLOAT)tr->n / 44) {
@@ -60,7 +63,10 @@ static void tract_init(sp_data *sp, tract *tr)
             diameter = 1.5;
         }
 
-        tr->diameter[i] = diameter;
+        tr->diameter[i] = 
+            tr->rest_diameter[i] = 
+            tr->target_diameter[i] = 
+            tr->new_diameter[i] = diameter;
 
     }
 
@@ -78,6 +84,8 @@ static void tract_init(sp_data *sp, tract *tr)
     tr->nose_diameter[0] = tr->velum_target;
     tract_calculate_reflections(tr);
     tract_calculate_nose_reflections(tr);
+
+    tr->T = 1.0 / (SPFLOAT)sp->sr;
 }
 
 @ 
@@ -130,6 +138,9 @@ static void tract_compute(sp_data *sp, tract *tr, SPFLOAT in)
     }
 
     tr->nose_output = tr->noseR[tr->nose_length - 1];
+
+    tract_calculate_reflections(tr);
+    tract_reshape(tr);
 }
 
 @
@@ -177,4 +188,55 @@ static void tract_calculate_nose_reflections(tract *tr)
         tr->nose_reflection[i] = (tr->noseA[i - 1] - tr->noseA[i]) /
             (tr->noseA[i-1] + tr->noseA[i]);
     }
+}
+
+@ @<Reshape Vocal Tract @>=
+
+static SPFLOAT move_towards(SPFLOAT current, SPFLOAT target, 
+        SPFLOAT amt_up, SPFLOAT amt_down)
+{
+    SPFLOAT tmp;
+    if(current < target) {
+        tmp = current + amt_up;
+        return MIN(tmp, target);
+    } else {
+        tmp = current - amt_down;
+        return MAX(tmp, target);
+    }
+    return 0.0;
+}
+
+static void tract_reshape(tract *tr)
+{
+    SPFLOAT amount;
+    SPFLOAT slow_return;
+    SPFLOAT diameter;
+    SPFLOAT target_diameter;
+    int i;
+    @q int last_obstruction; @>
+
+    @q last_obstruction = -1; @>
+    amount = tr->T * tr->movement_speed;
+
+    for(i = 0; i < tr->n; i++) {
+        diameter = tr->diameter[i];
+        target_diameter = tr->target_diameter[i];
+
+        @q if(diameter <= 0) last_obstruction = i; @>
+
+        if(i < tr->nose_start) slow_return = 0.6;
+        else if(i >= tr->tip_start) slow_return = 1.0;
+        else {
+            slow_return = 
+                0.6+0.4*(i - tr->nose_start)/(tr->tip_start - tr->nose_start);
+        }
+
+        tr->diameter[i] = move_towards(diameter, target_diameter, 
+                slow_return * amount, 2 * amount);
+
+    }
+
+    tr->nose_diameter[0] = move_towards(tr->nose_diameter[0], tr->velum_target,
+            amount * 0.25, amount * 0.1);
+    tr->noseA[0] = tr->nose_diameter[0] * tr->nose_diameter[0];
 }

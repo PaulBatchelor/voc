@@ -48,6 +48,7 @@ int sp_voc_compute(sp_data *sp, sp_voc *voc, SPFLOAT *out)
     tract_compute(sp, &voc->tr, glot);
     vocal_output += voc->tr.lip_output + voc->tr.nose_output;
 
+    tract_calculate_reflections(&voc->tr); 
     *out = vocal_output * 0.125;
     return SP_OK;
 }

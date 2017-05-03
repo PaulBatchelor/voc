@@ -82,6 +82,8 @@ typedef struct {
 @t \indent The original code here has it at $floor(28 * n/44)$, and since @>
 @t n=44, it should be 28.@>@/
     int nose_start; @t \indent $n - nose\_length + 1$, or 17 @>@/
+@t tip\_start is a constant set to 32 @>@/
+    int tip_start;
     SPFLOAT @, noseL[28];
     SPFLOAT @, noseR[28];
     SPFLOAT @, nose_junc_outL[29];
@@ -108,6 +110,7 @@ typedef struct {
     SPFLOAT @, movement_speed; @t 15 cm/s @>@\
     SPFLOAT @, lip_output;
     SPFLOAT @, nose_output;
+    SPFLOAT @, T;
 
 } tract;
 
