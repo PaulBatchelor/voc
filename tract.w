@@ -169,9 +169,9 @@ static void tract_calculate_reflections(tract *tr)
     tr->reflection_nose = tr->new_reflection_nose;
 
     sum = tr->A[tr->nose_start] + tr->A[tr->nose_start + 1] + tr->noseA[0];
-    tr->new_reflection_left = (2 * tr->A[tr->nose_start] - sum) / sum;
-    tr->new_reflection_right = (2 * tr->A[tr->nose_start + 1] - sum) / sum;
-    tr->new_reflection_nose = (2 * tr->noseA[0] - sum) / sum;
+    tr->new_reflection_left = (SPFLOAT)(2 * tr->A[tr->nose_start] - sum) / sum;
+    tr->new_reflection_right = (SPFLOAT)(2 * tr->A[tr->nose_start + 1] - sum) / sum;
+    tr->new_reflection_nose = (SPFLOAT)(2 * tr->noseA[0] - sum) / sum;
 }
 
 @

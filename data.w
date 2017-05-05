@@ -15,6 +15,8 @@ Like all Soundpipe modules, this struct has the prefix "sp".
 struct sp_voc {
     glottis @, glot; /*The Glottis*/
     tract @, tr; /*The Vocal Tract */
+    SPFLOAT @, buf[512];
+    int counter;
 };
 
 @ The glottis data structure contains all the variables used by the glottis.
@@ -111,6 +113,5 @@ typedef struct {
     SPFLOAT @, lip_output;
     SPFLOAT @, nose_output;
     SPFLOAT @, T;
-
 } tract;
 

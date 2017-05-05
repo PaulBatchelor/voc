@@ -33,6 +33,7 @@ int sp_voc_init(sp_data *sp, sp_voc *voc)
 {
     glottis_init(&voc->glot, sp->sr); /* initialize glottis */
     tract_init(sp, &voc->tr); /* initialize vocal tract */
+    voc->counter = 0;
     return SP_OK;
 }
 
@@ -40,15 +41,25 @@ int sp_voc_init(sp_data *sp, sp_voc *voc)
 int sp_voc_compute(sp_data *sp, sp_voc *voc, SPFLOAT *out)
 {
     SPFLOAT vocal_output, glot;
-    vocal_output = 0;
-    glot = glottis_compute(sp, &voc->glot);
+    int i;
 
-    tract_compute(sp, &voc->tr, glot);
-    vocal_output += voc->tr.lip_output + voc->tr.nose_output;
-    tract_compute(sp, &voc->tr, glot);
-    vocal_output += voc->tr.lip_output + voc->tr.nose_output;
+    @q vocal_output = 0; @>
+    
+    if(voc->counter == 0) {
+        for(i = 0; i < 512; i++) {
+            glot = glottis_compute(sp, &voc->glot);
+            voc->buf[i] = glot;
+        }
+    }
+
+    @q tract_compute(sp, &voc->tr, glot); @>
+    @q vocal_output += voc->tr.lip_output + voc->tr.nose_output; @>
+
+    @q tract_compute(sp, &voc->tr, glot); @>
+    @q vocal_output += voc->tr.lip_output + voc->tr.nose_output; @>
 
     tract_calculate_reflections(&voc->tr); 
-    *out = vocal_output * 0.125;
+    *out = voc->buf[voc->counter];
+    voc->counter = (voc->counter + 1) % 512;
     return SP_OK;
 }
