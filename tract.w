@@ -90,6 +90,8 @@ static void tract_init(sp_data *sp, tract *tr)
 
 @ 
 @<Vocal Tract Computation...@>=
+static int count = 0;
+static int print_me = 1;
 static void tract_compute(sp_data *sp, tract *tr, SPFLOAT in, SPFLOAT lambda)
 {
     SPFLOAT r, w;
@@ -104,8 +106,8 @@ static void tract_compute(sp_data *sp, tract *tr, SPFLOAT in, SPFLOAT lambda)
     for(i = 1; i < tr->n; i++) {
         r = tr->reflection[i] * (1 - lambda) + tr->new_reflection[i] * lambda;
         w = r * (tr->R[i - 1] + tr->L[i]);
-        tr->junction_outL[i] = tr->R[i - 1] - w;
-        tr->junction_outR[i] = tr->L[i] + w;
+        tr->junction_outR[i] = tr->R[i - 1] - w;
+        tr->junction_outL[i] = tr->L[i] + w;
     }
 
     i = tr->nose_start;
