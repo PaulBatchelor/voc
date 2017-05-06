@@ -20,7 +20,7 @@ static void glottis_init(glottis *glot, SPFLOAT sr)
     glot->tenseness = 0.6; /* value between 0 and 1 */
     glot->T = 1.0/sr; /* big T */
     glot->time_in_waveform = 0;
-    glottis_setup_waveform(glot);
+    glottis_setup_waveform(glot, 0);
 }
 
 @ This is where a single sample of audio is computed for the glottis
@@ -29,7 +29,7 @@ static void glottis_init(glottis *glot, SPFLOAT sr)
 % out = out * glot->intensity * glot->loudness;
 
 @<Glottis Computation@>=
-static SPFLOAT glottis_compute(sp_data *sp, glottis *glot)
+static SPFLOAT glottis_compute(sp_data *sp, glottis *glot, SPFLOAT lambda)
 {
     SPFLOAT out;
     SPFLOAT aspiration;
@@ -43,7 +43,7 @@ static SPFLOAT glottis_compute(sp_data *sp, glottis *glot)
 
     if(glot->time_in_waveform > glot->waveform_length) {
         glot->time_in_waveform -= glot->waveform_length;
-        glottis_setup_waveform(glot);
+        glottis_setup_waveform(glot, lambda);
 
     }
 
@@ -76,7 +76,7 @@ as the LF-model, as described in Lu and Smith\cite{lu2000glottal}.
 
 
 @<Set up Glottis Waveform@>=
-static void glottis_setup_waveform(glottis *glot)
+static void glottis_setup_waveform(glottis *glot, SPFLOAT lambda)
 {
     @<Set up local variables@>@/
     @<Derive |waveform_length|...@>@/

@@ -112,6 +112,6 @@ typedef struct {
     SPFLOAT @, movement_speed; @t 15 cm/s @>@\
     SPFLOAT @, lip_output;
     SPFLOAT @, nose_output;
-    SPFLOAT @, T;
+    SPFLOAT @, block_time;
 } tract;
 

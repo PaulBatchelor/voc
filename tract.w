@@ -81,16 +81,16 @@ static void tract_init(sp_data *sp, tract *tr)
         tr->nose_diameter[i] = diameter; 
     }
 
-    tr->nose_diameter[0] = tr->velum_target;
     tract_calculate_reflections(tr);
     tract_calculate_nose_reflections(tr);
+    tr->nose_diameter[0] = tr->velum_target;
 
-    tr->T = 1.0 / (SPFLOAT)sp->sr;
+    tr->block_time = 512.0 / (SPFLOAT)sp->sr;
 }
 
 @ 
 @<Vocal Tract Computation...@>=
-static void tract_compute(sp_data *sp, tract *tr, SPFLOAT in)
+static void tract_compute(sp_data *sp, tract *tr, SPFLOAT in, SPFLOAT lambda)
 {
     SPFLOAT r, w;
     int i;
@@ -102,18 +102,18 @@ static void tract_compute(sp_data *sp, tract *tr, SPFLOAT in)
     tr->junction_outL[tr->n] = tr->R[tr->n - 1] * tr->lip_reflection;
 
     for(i = 1; i < tr->n; i++) {
-        r = tr->new_reflection[i];
+        r = tr->reflection[i] * (1 - lambda) + tr->new_reflection[i] * lambda;
         w = r * (tr->R[i - 1] + tr->L[i]);
         tr->junction_outL[i] = tr->R[i - 1] - w;
         tr->junction_outR[i] = tr->L[i] + w;
     }
 
     i = tr->nose_start;
-    r = tr->new_reflection_left;
+    r = tr->new_reflection_left * (1 - lambda) + tr->reflection_left * lambda;
     tr->junction_outL[i] = r*tr->R[i-1] + (1+r)*(tr->noseL[0]+tr->L[i]);
-    r = tr->new_reflection_right;
+    r = tr->new_reflection_right * (1 - lambda) + tr->reflection_right * lambda;
     tr->junction_outR[i] = r*tr->L[i] + (1+r)*(tr->R[i-1]+tr->noseL[0]);
-    r = tr->new_reflection_nose;
+    r = tr->new_reflection_nose * (1 - lambda) + tr->reflection_nose * lambda;
     tr->nose_junc_outR[0] = r * tr->noseL[0]+(1+r)*(tr->L[i]+tr->R[i-1]);
 
     for(i = 0; i < tr->n; i++) {
@@ -216,9 +216,10 @@ static void tract_reshape(tract *tr)
     @q int last_obstruction; @>
 
     @q last_obstruction = -1; @>
-    amount = tr->T * tr->movement_speed;
+    amount = tr->block_time * tr->movement_speed;
 
     for(i = 0; i < tr->n; i++) {
+        slow_return = 0;
         diameter = tr->diameter[i];
         target_diameter = tr->target_diameter[i];
 
