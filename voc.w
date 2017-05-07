@@ -125,6 +125,8 @@ see |@<voc.h@>|
 #define MAX(A,B) ((A) > (B) ? (A) : (B))
 #endif
 
+#define EPSILON 1.0e-38
+
 @<Data Structures...@>
 
 @ A dynamically loaded sporth unit-generated such as the one defined here 

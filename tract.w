@@ -90,13 +90,15 @@ static void tract_init(sp_data *sp, tract *tr)
 
 @ 
 @<Vocal Tract Computation...@>=
-static int count = 0;
-static int print_me = 1;
+static int print_me_2 = 1;
+static unsigned int counter_2 = 0;
 static void tract_compute(sp_data *sp, tract *tr, SPFLOAT in, SPFLOAT lambda)
 {
     SPFLOAT r, w;
+    SPFLOAT tmp;
     int i;
 
+    counter_2 ++;
     @q track_process_transients(tr); p@>
     @q track_add_turbulent_noise(tr); p@>
 
@@ -131,7 +133,12 @@ static void tract_compute(sp_data *sp, tract *tr, SPFLOAT in, SPFLOAT lambda)
     for(i = 1; i < tr->nose_length; i++) {
         w = tr->nose_reflection[i] * (tr->noseR[i-1] + tr->noseL[i]);
         tr->nose_junc_outR[i] = tr->noseR[i - 1] - w;
-        tr->nose_junc_outL[i] = tr->noseL[i] + w;
+        tmp = tr->noseL[i] + w;
+        tr->nose_junc_outL[i] = MAX(tmp, EPSILON); 
+        if(isinf(tr->nose_junc_outL[i]) && print_me_2) {
+            fprintf(stderr, "NAN! i: %d counter: %d \n", i, counter_2);
+            print_me_2 = 0;
+        } 
     }
 
     for(i = 0; i < tr->nose_length; i++) {
@@ -140,6 +147,10 @@ static void tract_compute(sp_data *sp, tract *tr, SPFLOAT in, SPFLOAT lambda)
     }
 
     tr->nose_output = tr->noseR[tr->nose_length - 1];
+
+    if(isnan(tr->nose_output)) {
+        printf("NAN\n");
+    }
 
     tract_calculate_reflections(tr);
     tract_reshape(tr);
