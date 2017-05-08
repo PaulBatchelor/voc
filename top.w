@@ -57,7 +57,8 @@ int sp_voc_compute(sp_data *sp, sp_voc *voc, SPFLOAT *out)
            
             tract_compute(sp, &voc->tr, glot, lambda1);
             vocal_output += voc->tr.lip_output + voc->tr.nose_output;
-            tract_compute(sp, &voc->tr, glot, lambda1);
+
+            tract_compute(sp, &voc->tr, glot, lambda2);
             vocal_output += voc->tr.lip_output + voc->tr.nose_output;
             if(isnan(vocal_output) && print_me) {
                 fprintf(stderr, "%d: %g\n", counter, vocal_output);

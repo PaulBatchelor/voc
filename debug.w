@@ -18,7 +18,7 @@ static void process(sp_data *sp, void *ud)
 
     sp_voc_compute(sp, voc, &out);
 
-    sp_out(sp, 0, out * 0.3);
+    sp_out(sp, 0, out);
 }
 
 int main(int argc, char *argv[])

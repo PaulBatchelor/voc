@@ -95,7 +95,6 @@ static unsigned int counter_2 = 0;
 static void tract_compute(sp_data *sp, tract *tr, SPFLOAT in, SPFLOAT lambda)
 {
     SPFLOAT r, w;
-    SPFLOAT tmp;
     int i;
 
     counter_2 ++;
@@ -113,7 +112,7 @@ static void tract_compute(sp_data *sp, tract *tr, SPFLOAT in, SPFLOAT lambda)
     }
 
     i = tr->nose_start;
-    r = tr->new_reflection_left * (1 - lambda) + tr->reflection_left * lambda;
+    r = tr->new_reflection_left * (1-lambda) + tr->reflection_left*lambda;
     tr->junction_outL[i] = r*tr->R[i-1] + (1+r)*(tr->noseL[0]+tr->L[i]);
     r = tr->new_reflection_right * (1 - lambda) + tr->reflection_right * lambda;
     tr->junction_outR[i] = r*tr->L[i] + (1+r)*(tr->R[i-1]+tr->noseL[0]);
@@ -133,27 +132,16 @@ static void tract_compute(sp_data *sp, tract *tr, SPFLOAT in, SPFLOAT lambda)
     for(i = 1; i < tr->nose_length; i++) {
         w = tr->nose_reflection[i] * (tr->noseR[i-1] + tr->noseL[i]);
         tr->nose_junc_outR[i] = tr->noseR[i - 1] - w;
-        tmp = tr->noseL[i] + w;
-        tr->nose_junc_outL[i] = MAX(tmp, EPSILON); 
-        if(isinf(tr->nose_junc_outL[i]) && print_me_2) {
-            fprintf(stderr, "NAN! i: %d counter: %d \n", i, counter_2);
-            print_me_2 = 0;
-        } 
+        tr->nose_junc_outL[i] = tr->noseL[i] + w;
     }
 
     for(i = 0; i < tr->nose_length; i++) {
         tr->noseR[i] = tr->nose_junc_outR[i];
-        tr->noseL[i] = tr->nose_junc_outL[i];
+        tr->noseL[i] = tr->nose_junc_outL[i + 1];
     }
 
     tr->nose_output = tr->noseR[tr->nose_length - 1];
 
-    if(isnan(tr->nose_output)) {
-        printf("NAN\n");
-    }
-
-    tract_calculate_reflections(tr);
-    tract_reshape(tr);
 }
 
 @
