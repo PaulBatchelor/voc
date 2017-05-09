@@ -20,7 +20,7 @@ These states are executed in order:
 \endgroup
 
 @<The Sporth Unit...@>=
-
+#ifdef BUILD_SPORTH_UGEN
 static int sporth_gain(plumber_data *pd, sporth_stack *stack, void **ud)
 {
     sp_voc *voc;
@@ -44,6 +44,9 @@ static int sporth_gain(plumber_data *pd, sporth_stack *stack, void **ud)
     }
     return PLUMBER_OK;
 }
+
+@<Return Function@>@/
+#endif
 
 @ 
 The first state executed is {\bf creation}, denoted by the macro 

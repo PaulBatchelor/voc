@@ -1,6 +1,7 @@
 OBJ=voc.c
 CFLAGS=-fPIC -Wall -ansi -g -pedantic
-LDFLAGS=-lsporth -lsoundpipe -lsndfile -lm -lpthread -ljack -ldl
+SP_LDFLAGS = -lsoundpipe -lsndfile -lm
+LDFLAGS=-lsporth $(SP_LDFLAGS) -lpthread -ljack -ldl
 
 WEB=data.w top.w ugen.w glottis.w header.w debug.w tract.w
 
@@ -36,10 +37,10 @@ sp/%.tex:sp/%.sp
 	cat $< | sed "s/_/\\\\_/g" | sed "s/#/\\\\#/" | sed "s/$$/\\n/"> $@ 
 
 voc.so: $(OBJ)
-	$(CC) $(CFLAGS) -shared $(OBJ) -o $@ $(LDFLAGS)
+	$(CC) $(CFLAGS) -DBUILD_SPORTH_UGEN -shared $(OBJ) -o $@ $(LDFLAGS)
 
-debug: debug.o voc.o
-	$(CC) $(CFLAGS) debug.o voc.o -o $@ $(LDFLAGS)
+debug: debug.o voc.c
+	$(CC) $(CFLAGS) debug.o voc.c -o $@ $(SP_LDFLAGS)
 
 clean:
 	rm -rf voc.tex *.dvi *.idx *.log *.pdf *.sc *.toc *.scn 

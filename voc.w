@@ -63,7 +63,6 @@ the following components:
 @<The Vocal Tract@>@/
 @<Top Level...@>@/
 @<The Sporth Unit Generator Function@>@/
-@<Return Function@>@/
 
 @* External Sporth UGens.
 
