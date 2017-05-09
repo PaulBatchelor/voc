@@ -90,7 +90,6 @@ static void tract_init(sp_data *sp, tract *tr)
 
 @ 
 @<Vocal Tract Computation...@>=
-static int print_me_2 = 1;
 static unsigned int counter_2 = 0;
 static void tract_compute(sp_data *sp, tract *tr, SPFLOAT in, SPFLOAT lambda)
 {

@@ -38,8 +38,6 @@ int sp_voc_init(sp_data *sp, sp_voc *voc)
 }
 
 @ @<Voc Compute@>=
-static unsigned int counter = 0;
-static int print_me = 1;
 int sp_voc_compute(sp_data *sp, sp_voc *voc, SPFLOAT *out)
 {
     SPFLOAT vocal_output, glot;
@@ -60,12 +58,6 @@ int sp_voc_compute(sp_data *sp, sp_voc *voc, SPFLOAT *out)
 
             tract_compute(sp, &voc->tr, glot, lambda2);
             vocal_output += voc->tr.lip_output + voc->tr.nose_output;
-            if(isnan(vocal_output) && print_me) {
-                fprintf(stderr, "%d: %g\n", counter, vocal_output);
-                print_me = 0;
-            } else {
-                counter++;
-            }
             voc->buf[i] = vocal_output * 0.125;
         }
         tract_reshape(&voc->tr); 
