@@ -13,6 +13,7 @@ implementation |@<The Sporth Unit...@>|.
 @<Voc Destroy@>@/
 @<Voc Init...@>@/
 @<Voc Compute@>@/
+@<Voc Set Frequency@>@/
 
 @ @<Voc Create@>=
 int sp_voc_create(sp_voc **voc)
@@ -73,4 +74,13 @@ int sp_voc_compute(sp_data *sp, sp_voc *voc, SPFLOAT *out)
     *out = voc->buf[voc->counter];
     voc->counter = (voc->counter + 1) % 512;
     return SP_OK;
+}
+
+@ The function |sp_voc_set_frequency| sets the fundamental frequency
+for the glottal wave.
+
+@<Voc Set Frequency@> =
+void sp_voc_set_frequency(sp_voc *voc, SPFLOAT freq)
+{
+    voc->glot.freq = freq;
 }

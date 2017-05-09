@@ -25,4 +25,6 @@ int sp_voc_create(sp_voc **voc);
 int sp_voc_destroy(sp_voc **voc);
 int sp_voc_init(sp_data *sp, sp_voc *voc);
 int sp_voc_compute(sp_data *sp, sp_voc *voc, SPFLOAT *out);
+
+void sp_voc_set_frequency(sp_voc *voc, SPFLOAT freq);
 #endif

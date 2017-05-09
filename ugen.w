@@ -25,6 +25,7 @@ static int sporth_gain(plumber_data *pd, sporth_stack *stack, void **ud)
 {
     sp_voc *voc;
     SPFLOAT out;
+    SPFLOAT freq;
     switch(pd->mode) {
         case PLUMBER_CREATE:
             @<Creation@>;
@@ -55,6 +56,10 @@ It is here that the top-level function |@<Voc Crea...@>| is called.
 
 sp_voc_create(&voc);
 *ud = voc;
+if(sporth_check_args(stack, "f") != SPORTH_OK) {
+    plumber_print(pd, "Voc: not enough arguments!\n");    
+}
+freq = sporth_stack_pop_float(stack);
 sporth_stack_push_float(stack, 0.0);
 
 @ The second state executed is {\bf initialization}, denoted by the macro 
@@ -69,6 +74,7 @@ It is here that the top-level function |@<Voc Init...@>| is called.
 @<Init...@>=
 voc = *ud;
 sp_voc_init(pd->sp, voc);
+freq = sporth_stack_pop_float(stack);
 sporth_stack_push_float(stack, 0.0);
 
 @ The third state executed is {\bf computation}, denoted by the macro 
@@ -81,6 +87,8 @@ It is here that the top-level function |@<Voc Comp...@>| is called.
 
 @<Computation@>=
 voc = *ud;
+freq = sporth_stack_pop_float(stack);
+sp_voc_set_frequency(voc, freq);
 sp_voc_compute(pd->sp, voc, &out);
 sporth_stack_push_float(stack, out);
 

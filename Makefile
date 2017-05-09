@@ -1,6 +1,6 @@
 OBJ=voc.c
 CFLAGS=-fPIC -Wall -ansi -g -pedantic
-LDFLAGS=-lsporth -lsoundpipe -lsndfile -lm -lpthread
+LDFLAGS=-lsporth -lsoundpipe -lsndfile -lm -lpthread -ljack -ldl
 
 WEB=data.w top.w ugen.w glottis.w header.w debug.w tract.w
 
