@@ -1,5 +1,7 @@
 @* The Vocal Tract.
-The vocal tract.
+The vocal tract is the part of the vocal model which takes the
+excitation signal (the glottis) and creates the sentation of vowels.
+
 
 @<The Vocal Tract@>=
 @<Calculate Vocal Tract Reflections @>@/
@@ -8,7 +10,9 @@ The vocal tract.
 @<Vocal Tract Init...@>@/
 @<Vocal Tract Computation...@>@/
 
-@ 
+@ The function |tract_init| is responsible for zeroing out variables
+and buffers, as well as setting up constants. 
+
 @<Vocal Tract Initialization@>=
 static void tract_init(sp_data *sp, tract *tr)
 {
@@ -88,7 +92,16 @@ static void tract_init(sp_data *sp, tract *tr)
     tr->block_time = 512.0 / (SPFLOAT)sp->sr;
 }
 
-@ 
+@ The vocal tract computation function computes a single sample of audio.
+As the original implementation describes it, this function is designed
+to run at twice the sampling rate. For this reason, it is called twice 
+in the top level call back (see |@<Voc Create@>|). 
+
+At the moment, |tract_compute| has two input arguments. The variable |in|
+is the glottal excitation signal. The |lambda| variable is a coefficient
+for a linear crossfade along the buffer block, used for parameter smoothing.
+In future iterations, the linear crossfade will be removed in place of one-pole 
+smoothing filters. 
 @<Vocal Tract Computation...@>=
 static unsigned int counter_2 = 0;
 static void tract_compute(sp_data *sp, tract *tr, SPFLOAT in, SPFLOAT lambda)
@@ -97,8 +110,6 @@ static void tract_compute(sp_data *sp, tract *tr, SPFLOAT in, SPFLOAT lambda)
     int i;
 
     counter_2 ++;
-    @q track_process_transients(tr); p@>
-    @q track_add_turbulent_noise(tr); p@>
 
     tr->junction_outR[0] = tr->L[0] * tr->glottal_reflection + in;
     tr->junction_outL[tr->n] = tr->R[tr->n - 1] * tr->lip_reflection;
@@ -143,7 +154,10 @@ static void tract_compute(sp_data *sp, tract *tr, SPFLOAT in, SPFLOAT lambda)
 
 }
 
-@
+@ The function |tract_calculate_reflections| computes reflection 
+coefficients used in the scattering junction. Because this is a rather
+computationally expensive function, it is called once per render block,
+and then smoothed. 
 @<Calculate Vocal Tract Reflections @>=
 static void tract_calculate_reflections(tract *tr)
 {
@@ -174,7 +188,9 @@ static void tract_calculate_reflections(tract *tr)
     tr->new_reflection_nose = (SPFLOAT)(2 * tr->noseA[0] - sum) / sum;
 }
 
-@
+@ Similar to |tract_calculate_reflections|, this function computes 
+reflection coefficients for the nasal scattering junction. 
+% TODO: is "nasal scattering junction" the proper terminology?
 @<Calculate Vocal Tract Nose Reflections @>=
 static void tract_calculate_nose_reflections(tract *tr)
 {
@@ -190,7 +206,9 @@ static void tract_calculate_nose_reflections(tract *tr)
     }
 }
 
-@ @<Reshape Vocal Tract @>=
+@ 
+
+@<Reshape Vocal Tract @>=
 
 static SPFLOAT move_towards(SPFLOAT current, SPFLOAT target, 
         SPFLOAT amt_up, SPFLOAT amt_down)
