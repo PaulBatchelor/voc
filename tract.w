@@ -103,13 +103,12 @@ for a linear crossfade along the buffer block, used for parameter smoothing.
 In future iterations, the linear crossfade will be removed in place of one-pole 
 smoothing filters. 
 @<Vocal Tract Computation...@>=
-static unsigned int counter_2 = 0;
-static void tract_compute(sp_data *sp, tract *tr, SPFLOAT in, SPFLOAT lambda)
+static void tract_compute(sp_data *sp, tract *tr, 
+    SPFLOAT @, in, 
+    SPFLOAT @, lambda)
 {
     SPFLOAT r, w;
     int i;
-
-    counter_2 ++;
 
     tr->junction_outR[0] = tr->L[0] * tr->glottal_reflection + in;
     tr->junction_outL[tr->n] = tr->R[tr->n - 1] * tr->lip_reflection;
