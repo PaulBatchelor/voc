@@ -74,7 +74,7 @@ that this is not an ideal design choice.)
 
 It is here that the top-level function |@<Voc Init...@>| is called.
 
-@<Init...@>=
+@<Initialization@>=
 voc = *ud;
 sp_voc_init(pd->sp, voc);
 freq = sporth_stack_pop_float(stack);

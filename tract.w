@@ -2,6 +2,11 @@
 The vocal tract is the part of the vocal model which takes the
 excitation signal (the glottis) and creates the sentation of vowels.
 
+The two main functions for the vocal tract consist of of an initialization
+function |tract_init| called once before runtime, and a computation
+function |tract_compute| called at twice the sampling rate. See 
+|@<Vocal Tract Init...@>| and |@<Vocal Tract Computation...@>| for more 
+detail.
 
 @<The Vocal Tract@>=
 @<Calculate Vocal Tract Reflections @>@/
@@ -17,63 +22,79 @@ and buffers, as well as setting up constants.
 static void tract_init(sp_data *sp, tract *tr)
 {
     int i;
-    SPFLOAT diameter, d; /* needed to set up diameter arrays */
-    tr->n = 44;
-    tr->nose_length = 28;
-    tr->nose_start = 17;
+    SPFLOAT diameter, d; /* needed to set up diameter arrays */@/
+    @<Initialize Tract Constants and Variables@>@/
+    @<Zero Out Tr...@>@/
+    @<Set up Vocal Tract Diameters@>@/
+    @<Set up Nose Diameters@>@/
 
-    tr->reflection_left = 0.0;
-    tr->reflection_right = 0.0;
-    tr->reflection_nose = 0.0;
-    tr->new_reflection_left = 0.0;
-    tr->new_reflection_right= 0.0;
-    tr->new_reflection_nose = 0.0;
-    tr->velum_target = 0.01;
-    tr->glottal_reflection = 0.75;
-    tr->lip_reflection = -0.85;
-    tr->last_obstruction = -1;
-    tr->movement_speed = 15;
-    tr->lip_output = 0;
-    tr->nose_output = 0;
-    tr->tip_start = 32;
+    tract_calculate_reflections(tr);
+    tract_calculate_nose_reflections(tr);
+    tr->nose_diameter[0] = tr->velum_target;
 
-    memset(tr->diameter, 0, tr->n * sizeof(SPFLOAT));
-    memset(tr->rest_diameter, 0, tr->n * sizeof(SPFLOAT));
-    memset(tr->target_diameter, 0, tr->n * sizeof(SPFLOAT));
-    memset(tr->new_diameter, 0, tr->n * sizeof(SPFLOAT));
-    memset(tr->L, 0, tr->n * sizeof(SPFLOAT));
-    memset(tr->R, 0, tr->n * sizeof(SPFLOAT));
-    memset(tr->reflection, 0, (tr->n + 1) * sizeof(SPFLOAT));
-    memset(tr->new_reflection, 0, (tr->n + 1) * sizeof(SPFLOAT));
-    memset(tr->junction_outL, 0, (tr->n + 1) * sizeof(SPFLOAT));
-    memset(tr->junction_outR, 0, (tr->n + 1) * sizeof(SPFLOAT));
-    memset(tr->A, 0, tr->n * sizeof(SPFLOAT));
-    memset(tr->max_amplitude, 0, tr->n * sizeof(SPFLOAT));
-    memset(tr->noseL, 0, tr->nose_length * sizeof(SPFLOAT));
-    memset(tr->noseR, 0, tr->nose_length * sizeof(SPFLOAT));
-    memset(tr->nose_junc_outL, 0, (tr->nose_length + 1) * sizeof(SPFLOAT));
-    memset(tr->nose_junc_outR, 0, (tr->nose_length + 1) * sizeof(SPFLOAT));
-    memset(tr->nose_diameter, 0, tr->nose_length * sizeof(SPFLOAT));
-    memset(tr->noseA, 0, tr->nose_length * sizeof(SPFLOAT));
-    memset(tr->nose_max_amp, 0, tr->nose_length * sizeof(SPFLOAT));
+    tr->block_time = 512.0 / (SPFLOAT)sp->sr;
+}
 
-    for(i = 0; i < tr->n; i++) {
-        diameter = 0;
-        if(i < 7 * (SPFLOAT)tr->n / 44 - 0.5) {
-            diameter = 0.6;
-        } else if( i < 12 * (SPFLOAT)tr->n / 44) {
-            diameter = 1.1;
-        } else {
-            diameter = 1.5;
-        }
+@ @<Initialize Tract Constants and Variables@>=
+tr->n = 44;
+tr->nose_length = 28;
+tr->nose_start = 17;
 
-        tr->diameter[i] = 
-            tr->rest_diameter[i] = 
-            tr->target_diameter[i] = 
-            tr->new_diameter[i] = diameter;
+tr->reflection_left = 0.0;
+tr->reflection_right = 0.0;
+tr->reflection_nose = 0.0;
+tr->new_reflection_left = 0.0;
+tr->new_reflection_right= 0.0;
+tr->new_reflection_nose = 0.0;
+tr->velum_target = 0.01;
+tr->glottal_reflection = 0.75;
+tr->lip_reflection = -0.85;
+tr->last_obstruction = -1;
+tr->movement_speed = 15;
+tr->lip_output = 0;
+tr->nose_output = 0;
+tr->tip_start = 32;
 
+@ @<Zero Out Tract Buffers@>=
+memset(tr->diameter, 0, tr->n * sizeof(SPFLOAT));
+memset(tr->rest_diameter, 0, tr->n * sizeof(SPFLOAT));
+memset(tr->target_diameter, 0, tr->n * sizeof(SPFLOAT));
+memset(tr->new_diameter, 0, tr->n * sizeof(SPFLOAT));
+memset(tr->L, 0, tr->n * sizeof(SPFLOAT));
+memset(tr->R, 0, tr->n * sizeof(SPFLOAT));
+memset(tr->reflection, 0, (tr->n + 1) * sizeof(SPFLOAT));
+memset(tr->new_reflection, 0, (tr->n + 1) * sizeof(SPFLOAT));
+memset(tr->junction_outL, 0, (tr->n + 1) * sizeof(SPFLOAT));
+memset(tr->junction_outR, 0, (tr->n + 1) * sizeof(SPFLOAT));
+memset(tr->A, 0, tr->n * sizeof(SPFLOAT));
+memset(tr->max_amplitude, 0, tr->n * sizeof(SPFLOAT));
+memset(tr->noseL, 0, tr->nose_length * sizeof(SPFLOAT));
+memset(tr->noseR, 0, tr->nose_length * sizeof(SPFLOAT));
+memset(tr->nose_junc_outL, 0, (tr->nose_length + 1) * sizeof(SPFLOAT));
+memset(tr->nose_junc_outR, 0, (tr->nose_length + 1) * sizeof(SPFLOAT));
+memset(tr->nose_diameter, 0, tr->nose_length * sizeof(SPFLOAT));
+memset(tr->noseA, 0, tr->nose_length * sizeof(SPFLOAT));
+memset(tr->nose_max_amp, 0, tr->nose_length * sizeof(SPFLOAT));
+
+@ @<Set up Vocal Tract Diameters@>=
+for(i = 0; i < tr->n; i++) {
+    diameter = 0;
+    if(i < 7 * (SPFLOAT)tr->n / 44 - 0.5) {
+        diameter = 0.6;
+    } else if( i < 12 * (SPFLOAT)tr->n / 44) {
+        diameter = 1.1;
+    } else {
+        diameter = 1.5;
     }
 
+    tr->diameter[i] = 
+        tr->rest_diameter[i] = 
+        tr->target_diameter[i] = 
+        tr->new_diameter[i] = diameter;
+
+}
+
+@ @<Set up Nose Diameters@>=
     for(i = 0; i < tr->nose_length; i++) {
         d = 2 * ((SPFLOAT)i / tr->nose_length); 
         if(d < 1) {
@@ -84,13 +105,6 @@ static void tract_init(sp_data *sp, tract *tr)
         diameter = MIN(diameter, 1.9);
         tr->nose_diameter[i] = diameter; 
     }
-
-    tract_calculate_reflections(tr);
-    tract_calculate_nose_reflections(tr);
-    tr->nose_diameter[0] = tr->velum_target;
-
-    tr->block_time = 512.0 / (SPFLOAT)sp->sr;
-}
 
 @ The vocal tract computation function computes a single sample of audio.
 As the original implementation describes it, this function is designed
