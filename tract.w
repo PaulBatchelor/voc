@@ -83,7 +83,12 @@ memset(tr->nose_max_amp, 0, tr->nose_length * sizeof(SPFLOAT));
 below. These diameters will be modified and shaped by user control to
 shape the vowel sound.
 
-% TODO: use gnuplot to generate picture of what it looks like
+The initial shape of the vocal tract is plotted below:
+
+\startcenter
+\epsfxsize=180pt
+\epsfbox{plots/tract.eps}
+\stopcenter
 
 @<Set up Vocal Tract Diameters@>=
 for(i = 0; i < tr->n; i++) {

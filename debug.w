@@ -74,6 +74,36 @@ nose shapes found in the section |@<The Vocal Tract@>|, as well as create a
 visual approach to experimentation. 
 
 @(plot.c@>=
-int main(int argc, char **argv) {
+#include <soundpipe.h>
+#include <string.h>
+#include <stdlib.h>
+#include "voc.h"
+
+static void plot_tract()
+{
+    sp_voc *voc;
+    sp_data *sp;
+    SPFLOAT *tract;
+    int size;
+    int i;
+
+    sp_create(&sp);
+    sp_voc_create(&voc);
+    sp_voc_init(sp, voc);
+
+    tract = sp_voc_get_tract_diameters(voc);
+    size = sp_voc_get_tract_size(voc);
+
+    for(i = 0; i < size; i++) {
+        printf("%i\t%g\n", i, tract[i]);
+    }
+
+    sp_voc_destroy(&voc);
+    sp_destroy(&sp);
+}
+
+int main(int argc, char **argv) 
+{
+    plot_tract();
     return 0;
 }

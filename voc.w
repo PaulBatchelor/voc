@@ -1,5 +1,6 @@
 \input macros
 \input btxmac 
+\input epsf
 
 \startcenter
 {\bigfont Voc}

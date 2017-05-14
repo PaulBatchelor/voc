@@ -27,4 +27,7 @@ int sp_voc_init(sp_data *sp, sp_voc *voc);
 int sp_voc_compute(sp_data *sp, sp_voc *voc, SPFLOAT *out);
 
 void sp_voc_set_frequency(sp_voc *voc, SPFLOAT freq);
+
+SPFLOAT* sp_voc_get_tract_diameters(sp_voc *voc);
+int sp_voc_get_tract_size(sp_voc *voc);
 #endif

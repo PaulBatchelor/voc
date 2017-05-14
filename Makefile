@@ -3,6 +3,8 @@ CFLAGS=-fPIC -Wall -ansi -g -pedantic
 SP_LDFLAGS = -lsoundpipe -lsndfile -lm
 LDFLAGS=-lsporth $(SP_LDFLAGS) -lpthread -ljack -ldl
 
+PLOTS=plots/tract.eps
+
 WEB=data.w top.w ugen.w glottis.w header.w debug.w tract.w
 
 CONFIG?=
@@ -15,7 +17,7 @@ SP=sp/test.tex
 
 program: voc.so
 
-voc.tex: voc.w $(SP) macros.tex $(WEB)
+voc.tex: voc.w $(SP) macros.tex $(WEB) $(PLOTS)
 	cweave -x voc.w
 
 voc.dvi: voc.tex 
@@ -47,6 +49,12 @@ debug: debug.o voc.c
 plot: plot.o voc.c
 	$(CC) $(CFLAGS) plot.o voc.c -o $@ $(SP_LDFLAGS)
 
+plots/%.dat: plot
+	./plot > $@
+
+plots/%.eps: plots/%.plt  plots/%.dat
+	gnuplot $<
+
 clean:
 	rm -rf voc.tex *.dvi *.idx *.log *.pdf *.sc *.toc *.scn 
 	rm -rf *.c
@@ -57,3 +65,5 @@ clean:
 	rm -rf debug
 	rm -rf *.o
 	rm -rf plot
+	rm -rf plots/*.eps
+	rm -rf plots/*.dat

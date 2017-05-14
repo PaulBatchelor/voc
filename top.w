@@ -14,6 +14,8 @@ implementation |@<The Sporth Unit...@>|.
 @<Voc Init...@>@/
 @<Voc Compute@>@/
 @<Voc Set Frequency@>@/
+@<Voc Get Tract Diameters@>@/
+@<Voc Get Tract Size@>@/
 
 @ @<Voc Create@>=
 int sp_voc_create(sp_voc **voc)
@@ -83,4 +85,20 @@ for the glottal wave.
 void sp_voc_set_frequency(sp_voc *voc, SPFLOAT freq)
 {
     voc->glot.freq = freq;
+}
+
+@ This getter function returns the cylindrical diameters representing 
+tract. 
+
+@<Voc Get Tract Diameters@>=
+SPFLOAT* sp_voc_get_tract_diameters(sp_voc *voc)
+{
+    return voc->tr.diameter;
+}
+
+@ This getter function returns the size of the vocal tract. 
+@<Voc Get Tract Size@>=
+int sp_voc_get_tract_size(sp_voc *voc)
+{
+    return voc->tr.n;
 }
