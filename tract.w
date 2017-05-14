@@ -55,7 +55,10 @@ tr->lip_output = 0;
 tr->nose_output = 0;
 tr->tip_start = 32;
 
-@ @<Zero Out Tract Buffers@>=
+@ Several floating-point arrays are needed for the scattering junctions. 
+C does not zero these out by default. Below, the standard function 
+|memset()| from |string.h| is used to zero out each of the blocks of memory. 
+@<Zero Out Tract Buffers@>=
 memset(tr->diameter, 0, tr->n * sizeof(SPFLOAT));
 memset(tr->rest_diameter, 0, tr->n * sizeof(SPFLOAT));
 memset(tr->target_diameter, 0, tr->n * sizeof(SPFLOAT));
@@ -76,7 +79,13 @@ memset(tr->nose_diameter, 0, tr->nose_length * sizeof(SPFLOAT));
 memset(tr->noseA, 0, tr->nose_length * sizeof(SPFLOAT));
 memset(tr->nose_max_amp, 0, tr->nose_length * sizeof(SPFLOAT));
 
-@ @<Set up Vocal Tract Diameters@>=
+@ The cylindrical diameters approximating the vocal tract are set up
+below. These diameters will be modified and shaped by user control to
+shape the vowel sound.
+
+% TODO: use gnuplot to generate picture of what it looks like
+
+@<Set up Vocal Tract Diameters@>=
 for(i = 0; i < tr->n; i++) {
     diameter = 0;
     if(i < 7 * (SPFLOAT)tr->n / 44 - 0.5) {
@@ -94,7 +103,11 @@ for(i = 0; i < tr->n; i++) {
 
 }
 
-@ @<Set up Nose Diameters@>=
+@ The cylindrical diameters representing nose are set up. These are only
+set once, and are immutable for the rest of the program.
+
+% TODO: use gnuplot to generate picture of what it looks like
+@<Set up Nose Diameters@>=
     for(i = 0; i < tr->nose_length; i++) {
         d = 2 * ((SPFLOAT)i / tr->nose_length); 
         if(d < 1) {
@@ -238,7 +251,7 @@ static void tract_calculate_nose_reflections(tract *tr)
     }
 }
 
-@ 
+@ %TODO; is this function actually doing anything at the moment?
 
 @<Reshape Vocal Tract @>=
 
