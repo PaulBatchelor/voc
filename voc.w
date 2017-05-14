@@ -44,18 +44,17 @@ ability to use mathematical notation to describe concepts that are implemented.
 The C-language does not lend itself well for comprehensibility when it comes
 to DSP, even with comments. Nobody ever learned about DSP from C code alone! 
 A very successful example of literate programming is the book {\it Physically Based
-Rendering} \cite{pbrt}, which is both a text book and software implementation of a 
+Rendering} \cite{pbrt}, which is both a textbook and software implementation of a 
 physically accurate ray tracer. 
 
 The underlying technology used here is CWEB, the definitive literate programming 
-tool developed by Donald Knuth, with some minor adjustments for formatting. 
+tool developed by Donald Knuth, with some minor macro adjustments for formatting. 
 
 
 @* Overview.
 
 This being a literate program, it is necessary to provide a global overview
-of the program structure. A Sporth  is said to have
-the following components: 
+of the program structure. Here they are below:
 
 @c
 @<Headers@>@/
