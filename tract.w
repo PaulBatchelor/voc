@@ -1,6 +1,6 @@
 @* The Vocal Tract.
 The vocal tract is the part of the vocal model which takes the
-excitation signal (the glottis) and creates the sentation of vowels.
+excitation signal (the glottis) and produces the vowel formants from it.
 
 The two main functions for the vocal tract consist of of an initialization
 function |tract_init| called once before runtime, and a computation
