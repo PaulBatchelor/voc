@@ -171,13 +171,32 @@ static void tract_compute(sp_data *sp, tract *tr,
 coefficients used in the scattering junction. Because this is a rather
 computationally expensive function, it is called once per render block,
 and then smoothed. 
+
+First, the cylindrical areas of tract section are computed by squaring 
+the diameters, they are stored in the struct variable |A|. 
+
+Using the areas calculated, the reflections are calculated using the following
+formula:
+
+$$R_i = {A_{i - 1} - A_{i} \over A_{i - 1} + A_i} $$
+
+To prevent some divide-by-zero edge cases, when $A_i$ is exactly zero, it
+is set to be $0.999$.
+
+From there, the new coefficients are set. %TODO: elaborate
+
+% TODO: The following eqn above will be derived by Julius. would be nice to 
+% have!
 @<Calculate Vocal Tract Reflections @>=
 static void tract_calculate_reflections(tract *tr)
 {
     int i;
-    SPFLOAT sum;
-    @/ 
-    @<Calculate Tract Cylindrical Areas@>@/
+    SPFLOAT @, sum; @/
+
+    for(i = 0; i < tr->n; i++) {
+        tr->A[i] = tr->diameter[i] * tr->diameter[i]; 
+        /* Calculate area from diameter squared*/
+    }
 
     for(i = 1; i < tr->n; i++) {
         tr->reflection[i] = tr->new_reflection[i];
@@ -199,27 +218,19 @@ static void tract_calculate_reflections(tract *tr)
     tr->new_reflection_nose = (SPFLOAT)(2 * tr->noseA[0] - sum) / sum;
 }
 
-
-@ The areas of each of the cylindrical sections are computed from the 
-diameters squared, or $d^2$. They are stored in memory for later use in
-calculating the coefficients.
-@<Calculate Tract Cylindrical Areas@>=
-for(i = 0; i < tr->n; i++) {
-    tr->A[i] = tr->diameter[i] * tr->diameter[i];
-}
-
-
 @ Similar to |tract_calculate_reflections|, this function computes 
-reflection coefficients for the nasal scattering junction. This 
-function only gets called at init-time, as the nasal shape does not
-get controlled in realtime. 
+reflection coefficients for the nasal scattering junction. For more 
+information on the math that is happening, see 
+|@<Calculate Vocal Tract Reflections@>|.
 % TODO: is "nasal scattering junction" the proper terminology?
 @<Calculate Vocal Tract Nose Reflections @>=
 static void tract_calculate_nose_reflections(tract *tr)
 {
-    int i;@/
+    int i;
 
-    @<Calculate Nasal Cylindrical Areas@>@/
+    for(i = 0; i < tr->nose_length; i++) {
+        tr->noseA[i] = tr->nose_diameter[i] * tr->nose_diameter[i];
+    }
 
     for(i = 1; i < tr->nose_length; i++) {
         tr->nose_reflection[i] = (tr->noseA[i - 1] - tr->noseA[i]) /
@@ -227,14 +238,8 @@ static void tract_calculate_nose_reflections(tract *tr)
     }
 }
 
-@ Similar to |@<Calculate Tract Cylindrical...@>|, the cylindrical areas
-representing the nose are stored and calculated and stored for later.
-@<Calculate Nasal Cylindrical Areas@>=
-for(i = 0; i < tr->nose_length; i++) {
-    tr->noseA[i] = tr->nose_diameter[i] * tr->nose_diameter[i];
-}
-
 @ 
+
 @<Reshape Vocal Tract @>=
 
 static SPFLOAT move_towards(SPFLOAT current, SPFLOAT target, 
