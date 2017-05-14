@@ -16,6 +16,8 @@ implementation |@<The Sporth Unit...@>|.
 @<Voc Set Frequency@>@/
 @<Voc Get Tract Diameters@>@/
 @<Voc Get Tract Size@>@/
+@<Voc Get Nose Diameters@>@/
+@<Voc Get Nose Size@>@/
 
 @ @<Voc Create@>=
 int sp_voc_create(sp_voc **voc)
@@ -101,4 +103,19 @@ SPFLOAT* sp_voc_get_tract_diameters(sp_voc *voc)
 int sp_voc_get_tract_size(sp_voc *voc)
 {
     return voc->tr.n;
+}
+
+@ This function returns the cylindrical diameters of the nasal cavity.
+@<Voc Get Nose Diameters@>=
+
+SPFLOAT* sp_voc_get_nose_diameters(sp_voc *voc)
+{
+    return voc->tr.nose_diameter;
+}
+
+@ This function returns the nose size.
+@<Voc Get Nose Size@>=
+int sp_voc_get_nose_size(sp_voc *voc)
+{
+    return voc->tr.nose_length;
 }

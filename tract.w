@@ -111,6 +111,13 @@ for(i = 0; i < tr->n; i++) {
 @ The cylindrical diameters representing nose are set up. These are only
 set once, and are immutable for the rest of the program.
 
+The shape of the nasal passage is plotted below:
+
+\startcenter
+\epsfxsize=180pt
+\epsfbox{plots/nose.eps}
+\stopcenter
+
 % TODO: use gnuplot to generate picture of what it looks like
 @<Set up Nose Diameters@>=
     for(i = 0; i < tr->nose_length; i++) {

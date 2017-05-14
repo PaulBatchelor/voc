@@ -3,7 +3,7 @@ CFLAGS=-fPIC -Wall -ansi -g -pedantic
 SP_LDFLAGS = -lsoundpipe -lsndfile -lm
 LDFLAGS=-lsporth $(SP_LDFLAGS) -lpthread -ljack -ldl
 
-PLOTS=plots/tract.eps
+PLOTS=plots/tract.eps plots/nose.eps
 
 WEB=data.w top.w ugen.w glottis.w header.w debug.w tract.w
 
@@ -13,11 +13,9 @@ include $(CONFIG)
 
 default: voc.pdf 
 
-SP=sp/test.tex
-
 program: voc.so
 
-voc.tex: voc.w $(SP) macros.tex $(WEB) $(PLOTS)
+voc.tex: voc.w macros.tex $(WEB) $(PLOTS)
 	cweave -x voc.w
 
 voc.dvi: voc.tex 

@@ -69,9 +69,8 @@ int main(int argc, char *argv[])
 
 @ \subsec{A Utility for Plotting Data}
 The following program below is used to write data files to be read by
-GNUplot. The ideal use of this program is to be plot the various tract and
-nose shapes found in the section |@<The Vocal Tract@>|, as well as create a 
-visual approach to experimentation. 
+GNUplot. The primary use of this program is for generating use plots 
+in this document, such as those seen in the section |@<The Vocal Tract@>|.
 
 @(plot.c@>=
 #include <soundpipe.h>
@@ -102,6 +101,29 @@ static void plot_tract()
     sp_destroy(&sp);
 }
 
+static void plot_nose()
+{
+    sp_voc *voc;
+    sp_data *sp;
+    SPFLOAT *nose;
+    int size;
+    int i;
+
+    sp_create(&sp);
+    sp_voc_create(&voc);
+    sp_voc_init(sp, voc);
+
+    nose = sp_voc_get_nose_diameters(voc);
+    size = sp_voc_get_nose_size(voc);
+
+    for(i = 0; i < size; i++) {
+        printf("%i\t%g\n", i, nose[i]);
+    }
+
+    sp_voc_destroy(&voc);
+    sp_destroy(&sp);
+}
+
 int main(int argc, char **argv) 
 {
     if(argc < 2) {
@@ -110,8 +132,10 @@ int main(int argc, char **argv)
     }
     if(!strncmp(argv[1], "plots/tract.dat", 100)) {
         plot_tract();
+    } else if(!strncmp(argv[1], "plots/nose.dat", 100)) {
+        plot_nose();
     } else {
-        fprintf(stderr, "Could not find plot %s\n", argv[1]);
+        fprintf(stderr, "Plot: could not find plot %s\n", argv[1]);
         exit(1);
     }
     return 0;
