@@ -1,8 +1,21 @@
-@* A Simple C program.
+@* Small Applications and Examples.
 
-The example below is a simple C program using Soundpipe. It is a non-realtime
-program that will either write to a file or to |STDOUT| as a Octave/Matlab
-plot. The functions needed to call Voc from C in this way are found in the 
+It has been fruitful investment to write small applications to assist in the 
+debugging process. Such programs can be used to generate plots or visuals, or 
+to act as a simple program to be used with GDB. In addition to debugging, 
+these programs are also used to quickly try out concepts or ideas.
+
+@<Applications and Examples@>=
+@(debug.c@>@/
+@(plot.c@>
+
+@ \subsec{A Simple Program for Non-Realtime Processing}
+The example program below is a simple C program using Soundpipe. 
+It is a non-realtime program that will either write to a file or to |STDOUT| 
+as a Octave/Matlab plot. This program also is suited very well to be used
+with GDB for debugging.
+
+The functions needed to call Voc from C in this way are found in the 
 section |@<Top Level...@>|.
 
 @(debug.c@> = 
@@ -54,3 +67,13 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+@ \subsec{A Utility for Plotting Data}
+The following program below is used to write data files to be read by
+GNUplot. The ideal use of this program is to be plot the various tract and
+nose shapes found in the section |@<The Vocal Tract@>|, as well as create a 
+visual approach to experimentation. 
+
+@(plot.c@>=
+int main(int argc, char **argv) {
+    return 0;
+}

@@ -62,6 +62,7 @@ the following components:
 @<The Glottis@>@/
 @<The Vocal Tract@>@/
 @<Top Level...@>@/
+@q TODO: put the sporth ugen inside of applications and examples @>
 @<The Sporth Unit Generator Function@>@/
 
 @* External Sporth UGens.

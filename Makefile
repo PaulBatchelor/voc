@@ -30,6 +30,8 @@ voc.c: voc.w $(WEB)
 
 debug.c: voc.c
 
+plot.c: voc.c
+
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
@@ -42,6 +44,9 @@ voc.so: $(OBJ)
 debug: debug.o voc.c
 	$(CC) $(CFLAGS) debug.o voc.c -o $@ $(SP_LDFLAGS)
 
+plot: plot.o voc.c
+	$(CC) $(CFLAGS) plot.o voc.c -o $@ $(SP_LDFLAGS)
+
 clean:
 	rm -rf voc.tex *.dvi *.idx *.log *.pdf *.sc *.toc *.scn 
 	rm -rf *.c
@@ -51,3 +56,4 @@ clean:
 	rm -rf voc.h
 	rm -rf debug
 	rm -rf *.o
+	rm -rf plot
