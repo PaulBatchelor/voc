@@ -50,7 +50,7 @@ plot: plot.o voc.c
 	$(CC) $(CFLAGS) plot.o voc.c -o $@ $(SP_LDFLAGS)
 
 plots/%.dat: plot
-	./plot > $@
+	./plot $@ > $@
 
 plots/%.eps: plots/%.plt  plots/%.dat
 	gnuplot $<

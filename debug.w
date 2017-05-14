@@ -104,6 +104,15 @@ static void plot_tract()
 
 int main(int argc, char **argv) 
 {
-    plot_tract();
+    if(argc < 2) {
+        fprintf(stderr, "Usage: %s plots/name.dat\n", argv[0]);
+        exit(1);
+    }
+    if(!strncmp(argv[1], "plots/tract.dat", 100)) {
+        plot_tract();
+    } else {
+        fprintf(stderr, "Could not find plot %s\n", argv[1]);
+        exit(1);
+    }
     return 0;
 }
