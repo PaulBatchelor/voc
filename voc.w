@@ -54,9 +54,11 @@ tool developed by Donald Knuth, with some minor adjustments for formatting.
 
 @* Overview.
 
+
 This being a literate program, it is necessary to provide a global overview
-of the program structure. A Sporth  is said to have
-the following components: 
+of the program structure. The core Voc program consists of the following 
+top-level sections, displayed below. 
+
 
 @c
 @<Headers@>@/

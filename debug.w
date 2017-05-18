@@ -5,15 +5,19 @@ debugging process. Such programs can be used to generate plots or visuals, or
 to act as a simple program to be used with GDB. In addition to debugging, 
 these programs are also used to quickly try out concepts or ideas.
 
-@<Applications and Examples@>=
-@(debug.c@>@/
-@(plot.c@>
+@ \subsec{A Program for Non-Realtime Processing}
+The example program below is a C program designed out of necessity to debug 
+and test Voc. It a program with a simple commandline interface, where
+the user gives a "mode" along with set of optional arguments.
 
-@ \subsec{A Simple Program for Non-Realtime Processing}
-The example program below is a simple C program using Soundpipe. 
-It is a non-realtime program that will either write to a file or to |STDOUT| 
-as a Octave/Matlab plot. This program also is suited very well to be used
-with GDB for debugging.
+The following modes are as follows:
+
+\item{$\bullet$} {\bf audio:} writes an audio file called "test.wav". You
+must supply a duration (in samples).
+\item{$\bullet$} {\bf plot:} Uses sp\_process\_plot to generate a
+matlab/octave compatible program that plots the audio output.
+\item{$\bullet$} {\bf tongue:} Will be a test program that experiments with 
+parameters manipulating tongue position. This has not yet been written yet.
 
 The functions needed to call Voc from C in this way are found in the 
 section |@<Top Level...@>|.
@@ -34,26 +38,13 @@ static void process(sp_data *sp, void *ud)
     sp_out(sp, 0, out);
 }
 
-int main(int argc, char *argv[])
+static void run_voc(long len, int type)
 {
     sp_voc *voc;
     sp_data *sp;
-    int type;
 
-    if(argc < 3) {
-        fprintf(stderr, "Usage: %s [plot|audio] duration (samples)\n", argv[0]);
-        exit(0);
-    }
-
-    if(!strcmp(argv[1], "plot")) {
-        type = 0;
-    } else if(!strcmp(argv[1], "audio")) {
-        type = 1;
-    } else {
-        fprintf(stderr, "Error: invalid type %s\n", argv[1]);
-    }
     sp_create(&sp);
-    sp->len = atoi(argv[2]);
+    sp->len = len;
     sp_voc_create(&voc);
     sp_voc_init(sp, voc);
 
@@ -62,8 +53,35 @@ int main(int argc, char *argv[])
     } else {
         sp_process(sp, voc, process);
     }
+
     sp_voc_destroy(&voc);
     sp_destroy(&sp);
+}
+
+static void run_tongue(long len)
+{
+
+}
+
+int main(int argc, char *argv[])
+{
+    if(argc < 3) {
+        fprintf(stderr, 
+                "Usage: %s [plot|audio|tongue] duration (samples)\n", 
+                argv[0]);
+        exit(0);
+    }
+
+    if(!strcmp(argv[1], "plot")) {
+        run_voc(atoi(argv[2]), 0);
+    } else if(!strcmp(argv[1], "audio")) {
+        run_voc(atoi(argv[2]), 1);
+    } else if(!strcmp(argv[1], "tongue")) {
+        run_tongue(atoi(argv[2]));
+    } else {
+        fprintf(stderr, "Error: invalid type %s\n", argv[1]);
+    }
+
     return 0;
 }
 

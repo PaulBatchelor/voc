@@ -7,7 +7,6 @@ These are the functions that get called in the Sporth Unit Generator
 implementation |@<The Sporth Unit...@>|. 
 
 
-
 @<Top Level Functions@>=
 @<Voc Create@>@/
 @<Voc Destroy@>@/
