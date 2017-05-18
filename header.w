@@ -32,4 +32,13 @@ SPFLOAT* sp_voc_get_tract_diameters(sp_voc *voc);
 int sp_voc_get_tract_size(sp_voc *voc);
 SPFLOAT* sp_voc_get_nose_diameters(sp_voc *voc);
 int sp_voc_get_nose_size(sp_voc *voc);
+
+void sp_voc_set_diameter(sp_voc *voc,
+    int blade_start,
+    int lip_start,
+    int tip_start,
+    int tongue_index,
+    SPFLOAT tongue_diameter,
+    SPFLOAT *diameters);
+
 #endif

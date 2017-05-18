@@ -18,6 +18,7 @@ implementation |@<The Sporth Unit...@>|.
 @<Voc Get Tract Size@>@/
 @<Voc Get Nose Diameters@>@/
 @<Voc Get Nose Size@>@/
+@<Voc Set Diameters@>@/
 
 @ @<Voc Create@>=
 int sp_voc_create(sp_voc **voc)
@@ -118,4 +119,37 @@ SPFLOAT* sp_voc_get_nose_diameters(sp_voc *voc)
 int sp_voc_get_nose_size(sp_voc *voc)
 {
     return voc->tr.nose_length;
+}
+
+@ The function |sp_voc_set_diameter()| is a function adopted from Neil Thapen's
+Pink Trombone in a function he called setRestDiameter. It is the main function
+in charge of the "tongue position" XY control. Modifications to the original
+function have been made in an attempt to make the function more generalized.
+Instead of relying on internal state, all variables used are parameters in
+the function.
+
+@<Voc Set Diameters@>=
+void sp_voc_set_diameter(sp_voc *voc,
+    int blade_start,
+    int lip_start,
+    int tip_start,
+    int tongue_index,
+    SPFLOAT tongue_diameter,
+    SPFLOAT *diameters) {
+
+    int i;
+    SPFLOAT t;
+    SPFLOAT fixed_tongue_diameter;
+    SPFLOAT curve;
+    int grid_offset = 0;
+
+    for(i = blade_start; i < lip_start; i++) {
+        t = 1.1 * M_PI * 
+            (SPFLOAT)(tongue_index - i)/(tip_start - blade_start);
+        fixed_tongue_diameter = 2+(tongue_diameter-2)/1.5;
+        curve = (1.5 - fixed_tongue_diameter + grid_offset) * cos(t);
+        if(i == blade_start - 2 || i == lip_start - 1) curve *= 0.8;
+        if(i == blade_start || i == lip_start - 2) curve *= 0.94;
+        diameters[i] = 1.5 - curve;
+    }
 }
