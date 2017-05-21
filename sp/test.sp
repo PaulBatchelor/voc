@@ -1,3 +1,3 @@
 _voc "./voc.so" fl
-_voc fe 0.3 * 
+0.1 1 sine 150 200 biscale _voc fe 
 _voc fc
