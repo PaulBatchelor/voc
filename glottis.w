@@ -7,9 +7,9 @@ it should be noted that the glottal model is based on a modified
 LF-model\cite{lu2000glottal}.
 
 @<The Glottis@>=
-@<Set up Glottis Waveform@>@\
-@<Glottis Initialization@>@\
-@<Glottis Computation@>@\
+@<Set up Glottis Waveform@>@/
+@<Glottis Initialization@>@/
+@<Glottis Computation@>@/
 
 @ Initializiation of the glottis is done inside of |glottis_init|. 
 

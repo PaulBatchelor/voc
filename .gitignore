@@ -1,2 +1,5 @@
 cwebmac.tex
 btxmac.tex
+epsf.tex
+*.dat
+*.eps

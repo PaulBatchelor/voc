@@ -1,5 +1,6 @@
 \input macros
 \input btxmac 
+\input epsf
 
 \startcenter
 {\bigfont Voc}
@@ -53,14 +54,16 @@ tool developed by Donald Knuth, with some minor macro adjustments for formatting
 
 @* Overview.
 
-This being a literate program, it is necessary to provide a global overview
-of the program structure. Here they are below:
+More words will need to be put here.
 
+|@(debug.c@>|
+|@(voc.h@>|
 @c
 @<Headers@>@/
 @<The Glottis@>@/
 @<The Vocal Tract@>@/
 @<Top Level...@>@/
+@q TODO: put the sporth ugen inside of applications and examples @>
 @<The Sporth Unit Generator Function@>@/
 
 @* External Sporth UGens.

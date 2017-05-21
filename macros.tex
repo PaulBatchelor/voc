@@ -93,10 +93,11 @@
     \endgroup
 }
 
-%  fraction routine from eplain
+% display figures from gnuplot
 
-\def\frac#1/#2{\leavevmode
-   \kern.1em \raise .5ex \hbox{\the\scriptfont0 #1}%
-   \kern-.1em $/$%
-   \kern-.15em \lower .25ex \hbox{\the\scriptfont0 #2}%
-}%
+\def \displayfig #1 {
+\startcenter
+\epsfxsize=180pt
+\epsfbox{#1}
+\stopcenter
+}

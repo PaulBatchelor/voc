@@ -3,6 +3,11 @@ CFLAGS=-fPIC -Wall -ansi -g -pedantic
 SP_LDFLAGS = -lsoundpipe -lsndfile -lm
 LDFLAGS=-lsporth $(SP_LDFLAGS) -lpthread -ljack -ldl
 
+PLOTS=plots/tract.eps plots/nose.eps \
+	  plots/tongueshape1.eps\
+	  plots/tongueshape2.eps\
+	  plots/tongueshape3.eps\
+
 WEB=data.w top.w ugen.w glottis.w header.w debug.w tract.w
 
 CONFIG?=
@@ -11,11 +16,9 @@ include $(CONFIG)
 
 default: voc.pdf 
 
-SP=sp/test.tex
-
 program: voc.so
 
-voc.tex: voc.w $(SP) macros.tex $(WEB)
+voc.tex: voc.w macros.tex $(WEB) $(PLOTS)
 	cweave -x voc.w
 
 voc.dvi: voc.tex 
@@ -30,6 +33,8 @@ voc.c: voc.w $(WEB)
 
 debug.c: voc.c
 
+plot.c: voc.c
+
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
@@ -42,6 +47,15 @@ voc.so: $(OBJ)
 debug: debug.o voc.c
 	$(CC) $(CFLAGS) debug.o voc.c -o $@ $(SP_LDFLAGS)
 
+plot: plot.o voc.c
+	$(CC) $(CFLAGS) plot.o voc.c -o $@ $(SP_LDFLAGS)
+
+plots/%.dat: plot
+	./plot $@ > $@
+
+plots/%.eps: plots/%.plt  plots/%.dat
+	gnuplot $<
+
 clean:
 	rm -rf voc.tex *.dvi *.idx *.log *.pdf *.sc *.toc *.scn 
 	rm -rf *.c
@@ -51,3 +65,6 @@ clean:
 	rm -rf voc.h
 	rm -rf debug
 	rm -rf *.o
+	rm -rf plot
+	rm -rf plots/*.eps
+	rm -rf plots/*.dat
