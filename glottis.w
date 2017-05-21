@@ -125,7 +125,7 @@ The variable |waveform_length| is the period of the waveform based on the
 current frequency, and will be used later on in |@<Glottis Computation@>|. 
 
 $R_d$ is part of a set of normalized timing parameters used to calculate
-the time coefficients described in the LF model @q cite fant 1997 here@>. 
+the time coefficients described in the LF model \cite{fant1997voice}. 
 The other timing parameters $R_a$, $R_g$, and $R_k$ can
 be computed in terms of $R_d$, which is why this gets computed first. 
 $R_d$ is derived from the parameter |glot->tenseness|. 
@@ -141,10 +141,10 @@ Rd = glot->Rd;
 if(Rd < 0.5) Rd = 0.5;
 if(Rd > 2.7) Rd = 2.7;
 
-@ $R_d$ can be used to calculate appriximations for $R_a$, $R_g$, and $R_k$. 
+@ $R_d$ can be used to calculate approximations for $R_a$, $R_g$, and $R_k$. 
 The equations described below have been derived using linear regression. 
-$$R_{ap} = (-1 + 4.8R_d)/100$$
-$$R_{kp} = (22.4 + 11.8R_d)/100$$
+$$R_{ap} = {(-1 + 4.8R_d) \over 100}$$
+$$R_{kp} = {(22.4 + 11.8R_d) \over 100}$$
 
 $R_{gp}$ is derived using the results from $R_{ap}$ and $R_{kp}$ in 
 the following equation described in Fant 1997:
@@ -152,9 +152,8 @@ the following equation described in Fant 1997:
 $$R_d = (1/0.11)(0.5 + 1.2R_{k})(R_k / 4R_g + R_a)$$
 
 Which yields:
-% TODO: extract \frac from eplain
-% TODO: work out this algebraic equation
-$$R_{gp} = (R_{kp}/4)(0.5 + 1.2R_{kp})/(0.11R_d - R_{ap}*(0.5+1.2R_{kp}))$$
+$$R_{gp} = {(R_{kp}/4)(0.5 + 1.2R_{kp})\over
+(0.11R_d - R_{ap}*(0.5+1.2R_{kp}))}$$
 
 @<Derive $R_a$, $R_k$, and $R_g$@>=
 Ra = -0.01 + 0.048*Rd; 
