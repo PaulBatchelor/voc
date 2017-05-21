@@ -54,10 +54,29 @@ tool developed by Donald Knuth, with some minor macro adjustments for formatting
 
 @* Overview.
 
-More words will need to be put here.
+In a literate program, it is customary (and somewhat mandatory) to provide 
+an "overview" section. This section serves as the entry point in generating
+the C amalgamation file |voc.c|. Complying with the constraints of |CWEB|, 
+the corresponding sections will appear at the bottom of this section.
 
-|@(debug.c@>|
-|@(voc.h@>|
+In addition to the main C amalgamation, there are a few other files
+that this literate program generates:
+
+|@(debug.c@>| is the debug utility used extensively 
+through out the development of Voc, used to debug and test out features.
+
+|@(voc.h@>| is the user-facing header file that goes
+along with the C amalgamation. Anyone wishing to use this program will need
+this header file along with the C file. 
+
+|@(plot.c@>| is a program that generates dat files, which
+can then be fed into gnuplot for plotting. It is used to generate the plots
+you see in this document.
+
+\medskip
+
+The main sections of this program are as follows: 
+
 @c
 @<Headers@>@/
 @<The Glottis@>@/
