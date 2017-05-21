@@ -17,7 +17,8 @@ must supply a duration (in samples).
 \item{$\bullet$} {\bf plot:} Uses sp\_process\_plot to generate a
 matlab/octave compatible program that plots the audio output.
 \item{$\bullet$} {\bf tongue:} Will be a test program that experiments with 
-parameters manipulating tongue position. 
+parameters manipulating tongue position. It takes in tongue index and diameter
+parameters, to allow for experimentation without needing to recompile.
 
 The functions needed to call Voc from C in this way are found in the 
 section |@<Top Level...@>|.
