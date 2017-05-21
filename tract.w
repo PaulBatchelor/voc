@@ -85,10 +85,7 @@ shape the vowel sound.
 
 The initial shape of the vocal tract is plotted below:
 
-\startcenter
-\epsfxsize=180pt
-\epsfbox{plots/tract.eps}
-\stopcenter
+\displayfig{plots/tract.eps}
 
 @<Set up Vocal Tract Diameters@>=
 for(i = 0; i < tr->n; i++) {
@@ -113,10 +110,7 @@ set once, and are immutable for the rest of the program.
 
 The shape of the nasal passage is plotted below:
 
-\startcenter
-\epsfxsize=180pt
-\epsfbox{plots/nose.eps}
-\stopcenter
+\displayfig{plots/nose.eps}
 
 % TODO: use gnuplot to generate picture of what it looks like
 @<Set up Nose Diameters@>=

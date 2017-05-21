@@ -5,7 +5,7 @@ debugging process. Such programs can be used to generate plots or visuals, or
 to act as a simple program to be used with GDB. In addition to debugging, 
 these programs are also used to quickly try out concepts or ideas.
 
-@ \subsec{A Program for Non-Realtime Processing}
+@ \subsec{A Program for Non-Realtime Processing and Debugging}
 The example program below is a C program designed out of necessity to debug 
 and test Voc. It a program with a simple commandline interface, where
 the user gives a "mode" along with set of optional arguments.
@@ -17,7 +17,7 @@ must supply a duration (in samples).
 \item{$\bullet$} {\bf plot:} Uses sp\_process\_plot to generate a
 matlab/octave compatible program that plots the audio output.
 \item{$\bullet$} {\bf tongue:} Will be a test program that experiments with 
-parameters manipulating tongue position. This has not yet been written yet.
+parameters manipulating tongue position. 
 
 The functions needed to call Voc from C in this way are found in the 
 section |@<Top Level...@>|.
@@ -58,26 +58,56 @@ static void run_voc(long len, int type)
     sp_destroy(&sp);
 }
 
-static void run_tongue(long len)
+static void run_tongue(SPFLOAT tongue_index, SPFLOAT tongue_diameter)
 {
+    sp_voc *voc;
+    sp_data *sp;
 
+    sp_create(&sp);
+    sp_voc_create(&voc);
+    sp_voc_init(sp, voc);
+
+    fprintf(stderr, "Tongue index: %g. Tongue diameter: %g\n", 
+        tongue_index,
+        tongue_diameter);
+    sp_voc_set_tongue_shape(voc, tongue_index, tongue_diameter);
+    sp_process(sp, voc, process);
+
+    sp_voc_destroy(&voc);
+    sp_destroy(&sp);
 }
 
 int main(int argc, char *argv[])
 {
-    if(argc < 3) {
-        fprintf(stderr, 
-                "Usage: %s [plot|audio|tongue] duration (samples)\n", 
-                argv[0]);
+
+    if(argc == 1) {
+        fprintf(stderr, "Pick a mode!\n");
         exit(0);
     }
 
     if(!strcmp(argv[1], "plot")) {
+        if(argc < 3) {
+            fprintf(stderr, 
+                    "Usage: %s plot duration (samples)\n", 
+                    argv[0]);
+            exit(0);
+        }
         run_voc(atoi(argv[2]), 0);
     } else if(!strcmp(argv[1], "audio")) {
+        if(argc < 3) {
+            fprintf(stderr, 
+                    "Usage: %s audio duration (samples)\n", 
+                    argv[0]);
+            exit(0);
+        }
         run_voc(atoi(argv[2]), 1);
     } else if(!strcmp(argv[1], "tongue")) {
-        run_tongue(atoi(argv[2]));
+        if(argc < 4) {
+            fprintf(stderr, "Usage %s tongue tongue_index tongue_diameter\n",
+                    argv[0]);
+            exit(0);
+        }
+        run_tongue(atof(argv[2]), atof(argv[3]));
     } else {
         fprintf(stderr, "Error: invalid type %s\n", argv[1]);
     }
@@ -142,6 +172,41 @@ static void plot_nose()
     sp_destroy(&sp);
 }
 
+static void plot_tongue_shape(int num)
+{
+    sp_voc *voc;
+    sp_data *sp;
+    SPFLOAT *tract;
+    int size;
+    int i;
+
+    sp_create(&sp);
+    sp_voc_create(&voc);
+    sp_voc_init(sp, voc);
+
+    tract = sp_voc_get_tract_diameters(voc);
+    size = sp_voc_get_tract_size(voc);
+
+    switch(num) {
+        case 1:
+            sp_voc_set_tongue_shape(voc, 20.5, 3.5);
+            break;
+        case 2:
+            sp_voc_set_tongue_shape(voc, 25.5, 3.5);
+            break;
+        case 3:
+            sp_voc_set_tongue_shape(voc, 20.5, 2.0);
+            break;
+    }
+
+    for(i = 0; i < size; i++) {
+        printf("%i\t%g\n", i, tract[i]);
+    }
+
+    sp_voc_destroy(&voc);
+    sp_destroy(&sp);
+}
+
 int main(int argc, char **argv) 
 {
     if(argc < 2) {
@@ -152,6 +217,12 @@ int main(int argc, char **argv)
         plot_tract();
     } else if(!strncmp(argv[1], "plots/nose.dat", 100)) {
         plot_nose();
+    } else if(!strncmp(argv[1], "plots/tongueshape1.dat", 100)) {
+        plot_tongue_shape(1);
+    } else if(!strncmp(argv[1], "plots/tongueshape2.dat", 100)) {
+        plot_tongue_shape(2);
+    } else if(!strncmp(argv[1], "plots/tongueshape3.dat", 100)) {
+        plot_tongue_shape(3);
     } else {
         fprintf(stderr, "Plot: could not find plot %s\n", argv[1]);
         exit(1);

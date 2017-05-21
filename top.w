@@ -18,6 +18,7 @@ implementation |@<The Sporth Unit...@>|.
 @<Voc Get Nose Diameters@>@/
 @<Voc Get Nose Size@>@/
 @<Voc Set Diameters@>@/
+@<Voc Set Tongue Shape@>@/
 
 @ @<Voc Create@>=
 int sp_voc_create(sp_voc **voc)
@@ -95,7 +96,7 @@ tract.
 @<Voc Get Tract Diameters@>=
 SPFLOAT* sp_voc_get_tract_diameters(sp_voc *voc)
 {
-    return voc->tr.diameter;
+    return voc->tr.target_diameter;
 }
 
 @ This getter function returns the size of the vocal tract. 
@@ -125,15 +126,30 @@ Pink Trombone in a function he called setRestDiameter. It is the main function
 in charge of the "tongue position" XY control. Modifications to the original
 function have been made in an attempt to make the function more generalized.
 Instead of relying on internal state, all variables used are parameters in
-the function.
+the function. Because of this fact, there are quite a few function
+parameters:
+
+\item{$\bullet$} {\bf voc}, the core Voc data struct 
+\item{$\bullet$} {\bf blade\_start}, index where the blade (?) starts. 
+this is set to 10 in pink trombone
+\item{$\bullet$} {\bf lip\_start}, index where lip starts. this constant is 
+set to 39.
+\item{$\bullet$} {\bf tip\_start}, this is set to 32.
+\item{$\bullet$} {\bf tongue\_index} 
+\item{$\bullet$} {\bf tongue\_diameter}
+\item{$\bullet$} {\bf diameters}, the floating point array to write to 
+
+For practical use cases, it is not ideal to call this function directly.
+Instead, it can be indirectly called using a more sane function 
+|sp_voc_set_tongue_shape()|, found in the section |@<Voc Set Tongue Shape@>|.
 
 @<Voc Set Diameters@>=
-void sp_voc_set_diameter(sp_voc *voc,
-    int blade_start,
-    int lip_start,
-    int tip_start,
-    int tongue_index,
-    SPFLOAT tongue_diameter,
+void sp_voc_set_diameters(sp_voc *voc, @/
+    int blade_start, @/
+    int lip_start, @/
+    int tip_start, @/
+    SPFLOAT tongue_index,@/
+    SPFLOAT tongue_diameter, @/
     SPFLOAT *diameters) {
 
     int i;
@@ -151,4 +167,29 @@ void sp_voc_set_diameter(sp_voc *voc,
         if(i == blade_start || i == lip_start - 2) curve *= 0.94;
         diameters[i] = 1.5 - curve;
     }
+}
+
+
+@ The function |sp_voc_set_tongue_shape()| will set the shape of the 
+tongue using the two primary arguments |tongue_index| and |tongue_diameter|.
+It is a wrapper around the function described in |@<Voc Set Diameters@>|, 
+filling in the constants used, and thereby making it simpler to work with.
+
+A few tract shapes shaped using this function have been generated below:
+
+\displayfig{plots/tongueshape1.eps}
+
+\displayfig{plots/tongueshape2.eps}
+
+\displayfig{plots/tongueshape3.eps}
+
+@<Voc Set Tongue Shape@>=
+
+void sp_voc_set_tongue_shape(sp_voc *voc, 
+    SPFLOAT tongue_index, @/
+    SPFLOAT tongue_diameter) {
+    SPFLOAT *diameters;
+    diameters = sp_voc_get_tract_diameters(voc);
+    sp_voc_set_diameters(voc, 10, 39, 32, 
+            tongue_index, tongue_diameter, diameters);
 }

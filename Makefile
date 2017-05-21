@@ -3,7 +3,10 @@ CFLAGS=-fPIC -Wall -ansi -g -pedantic
 SP_LDFLAGS = -lsoundpipe -lsndfile -lm
 LDFLAGS=-lsporth $(SP_LDFLAGS) -lpthread -ljack -ldl
 
-PLOTS=plots/tract.eps plots/nose.eps
+PLOTS=plots/tract.eps plots/nose.eps \
+	  plots/tongueshape1.eps\
+	  plots/tongueshape2.eps\
+	  plots/tongueshape3.eps\
 
 WEB=data.w top.w ugen.w glottis.w header.w debug.w tract.w
 

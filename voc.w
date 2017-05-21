@@ -54,11 +54,10 @@ tool developed by Donald Knuth, with some minor adjustments for formatting.
 
 @* Overview.
 
+More words will need to be put here.
 
-This being a literate program, it is necessary to provide a global overview
-of the program structure. The core Voc program consists of the following 
-top-level sections, displayed below. 
-
+|@(debug.c@>|
+|@(voc.h@>|
 
 @c
 @<Headers@>@/
