@@ -3,6 +3,8 @@ CFLAGS=-fPIC -Wall -ansi -g -pedantic
 SP_LDFLAGS = -lsoundpipe -lsndfile -lm
 LDFLAGS=-lsporth $(SP_LDFLAGS) -lpthread -ljack -ldl
 
+SPORTH_FILES= sp/test.tex
+
 PLOTS=plots/tract.eps plots/nose.eps \
 	  plots/tongueshape1.eps\
 	  plots/tongueshape2.eps\
@@ -18,7 +20,7 @@ default: voc.pdf
 
 program: voc.so
 
-voc.tex: voc.w macros.tex $(WEB) $(PLOTS)
+voc.tex: voc.w macros.tex $(WEB) $(PLOTS) $(SPORTH_FILES)
 	cweave -x voc.w
 
 voc.dvi: voc.tex 
