@@ -1,5 +1,5 @@
 OBJ=voc.c
-CFLAGS=-fPIC -Wall -ansi -g -pedantic
+CFLAGS=-fPIC -Wall -ansi -g -pedantic -O3
 SP_LDFLAGS = -lsoundpipe -lsndfile -lm
 LDFLAGS=-lsporth $(SP_LDFLAGS) -lpthread -ldl
 
