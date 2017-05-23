@@ -206,7 +206,7 @@ int sp_voc_get_counter(sp_voc *voc)
 }
 @
 @<Voc Set Breathiness@>=
-int sp_voc_set_breathiness(sp_voc *voc, SPFLOAT breathiness)
+void sp_voc_set_breathiness(sp_voc *voc, SPFLOAT breathiness)
 {
     voc->glot.tenseness = breathiness;
 }
