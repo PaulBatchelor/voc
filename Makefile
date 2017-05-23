@@ -1,7 +1,7 @@
 OBJ=voc.c
 CFLAGS=-fPIC -Wall -ansi -g -pedantic
 SP_LDFLAGS = -lsoundpipe -lsndfile -lm
-LDFLAGS=-lsporth $(SP_LDFLAGS) -lpthread -ljack -ldl
+LDFLAGS=-lsporth $(SP_LDFLAGS) -lpthread -ldl
 
 SPORTH_FILES= sp/test.tex
 

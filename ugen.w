@@ -26,6 +26,11 @@ static int sporth_gain(plumber_data *pd, sporth_stack *stack, void **ud)
     sp_voc *voc;
     SPFLOAT out;
     SPFLOAT freq;
+    SPFLOAT pos;
+    SPFLOAT diameter;
+    SPFLOAT breath;
+    SPFLOAT nasal;
+
     switch(pd->mode) {
         case PLUMBER_CREATE:
             @<Creation@>;
@@ -62,6 +67,10 @@ sp_voc_create(&voc);
 if(sporth_check_args(stack, "f") != SPORTH_OK) {
     plumber_print(pd, "Voc: not enough arguments!\n");    
 }
+nasal = sporth_stack_pop_float(stack);
+breath = sporth_stack_pop_float(stack);
+diameter = sporth_stack_pop_float(stack);
+pos = sporth_stack_pop_float(stack);
 freq = sporth_stack_pop_float(stack);
 sporth_stack_push_float(stack, 0.0);
 
@@ -77,6 +86,10 @@ It is here that the top-level function |@<Voc Init...@>| is called.
 @<Initialization@>=
 voc = *ud;
 sp_voc_init(pd->sp, voc);
+nasal = sporth_stack_pop_float(stack);
+breath = sporth_stack_pop_float(stack);
+diameter = sporth_stack_pop_float(stack);
+pos = sporth_stack_pop_float(stack);
 freq = sporth_stack_pop_float(stack);
 sporth_stack_push_float(stack, 0.0);
 
@@ -90,8 +103,18 @@ It is here that the top-level function |@<Voc Comp...@>| is called.
 
 @<Computation@>=
 voc = *ud;
+nasal = sporth_stack_pop_float(stack);
+breath = sporth_stack_pop_float(stack);
+diameter = sporth_stack_pop_float(stack);
+pos = sporth_stack_pop_float(stack);
 freq = sporth_stack_pop_float(stack);
 sp_voc_set_frequency(voc, freq);
+sp_voc_set_breathiness(voc, breath);
+
+if(sp_voc_get_counter(voc) == 0) {
+    sp_voc_set_tongue_shape(voc, 40.0 * pos, diameter * 3.5);
+}
+
 sp_voc_compute(pd->sp, voc, &out);
 sporth_stack_push_float(stack, out);
 

@@ -19,6 +19,8 @@ implementation |@<The Sporth Unit...@>|.
 @<Voc Get Nose Size@>@/
 @<Voc Set Diameters@>@/
 @<Voc Set Tongue Shape@>@/
+@<Voc Get Counter@>@/
+@<Voc Set Breathiness@>@/
 
 @ @<Voc Create@>=
 int sp_voc_create(sp_voc **voc)
@@ -53,6 +55,8 @@ int sp_voc_compute(sp_data *sp, sp_voc *voc, SPFLOAT *out)
     @q vocal_output = 0; @>
    
     if(voc->counter == 0) {
+        tract_reshape(&voc->tr); 
+        tract_calculate_reflections(&voc->tr); 
         for(i = 0; i < 512; i++) {
             vocal_output = 0;
             lambda1 = (SPFLOAT) i / 512;
@@ -66,15 +70,8 @@ int sp_voc_compute(sp_data *sp, sp_voc *voc, SPFLOAT *out)
             vocal_output += voc->tr.lip_output + voc->tr.nose_output;
             voc->buf[i] = vocal_output * 0.125;
         }
-        tract_reshape(&voc->tr); 
-        tract_calculate_reflections(&voc->tr); 
     }
 
-    @q tract_compute(sp, &voc->tr, glot); @>
-    @q vocal_output += voc->tr.lip_output + voc->tr.nose_output; @>
-
-    @q tract_compute(sp, &voc->tr, glot); @>
-    @q vocal_output += voc->tr.lip_output + voc->tr.nose_output; @>
 
     *out = voc->buf[voc->counter];
     voc->counter = (voc->counter + 1) % 512;
@@ -192,4 +189,24 @@ void sp_voc_set_tongue_shape(sp_voc *voc,
     diameters = sp_voc_get_tract_diameters(voc);
     sp_voc_set_diameters(voc, 10, 39, 32, 
             tongue_index, tongue_diameter, diameters);
+}
+
+@ Voc keeps an internal counter for control rate operations called inside
+of the audio-rate compute function in |@<Voc Compute@>|. The function 
+|sp_voc_get_counter()| gets the current counter position. When the counter
+is 0, the next call to |sp_voc_compute| will compute another block of audio.
+Getting the counter position before the call allows control-rate variables
+to be set before then.
+
+@<Voc Get Counter@>=
+
+int sp_voc_get_counter(sp_voc *voc)
+{
+    return voc->counter;
+}
+@
+@<Voc Set Breathiness@>=
+int sp_voc_set_breathiness(sp_voc *voc, SPFLOAT breathiness)
+{
+    voc->glot.tenseness = breathiness;
 }
