@@ -21,6 +21,7 @@ implementation |@<The Sporth Unit...@>|.
 @<Voc Set Tongue Shape@>@/
 @<Voc Get Counter@>@/
 @<Voc Set Breathiness@>@/
+@<Voc Set Velum@>@/
 
 @ @<Voc Create@>=
 int sp_voc_create(sp_voc **voc)
@@ -209,4 +210,14 @@ int sp_voc_get_counter(sp_voc *voc)
 void sp_voc_set_breathiness(sp_voc *voc, SPFLOAT breathiness)
 {
     voc->glot.tenseness = breathiness;
+}
+
+@ The function |sp_voc_set_velum| sets the {\it velum}, or soft pallette of 
+tract model.  In the original implementation, the default value is 0.01, and 
+set to a value of 0.04 to get a nasally sound.
+
+@<Voc Set Velum@>=
+void sp_voc_set_velum(sp_voc *voc, SPFLOAT velum)
+{
+    voc->tr.velum_target = velum;
 }

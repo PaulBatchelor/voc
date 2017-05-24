@@ -38,6 +38,7 @@ void sp_voc_set_tongue_shape(sp_voc *voc,
     SPFLOAT tongue_index,
     SPFLOAT tongue_diameter);
 void sp_voc_set_breathiness(sp_voc *voc, SPFLOAT breathiness);
+void sp_voc_set_velum(sp_voc *voc, SPFLOAT velum);
 
 void sp_voc_set_diameters(sp_voc *voc,
     int blade_start,

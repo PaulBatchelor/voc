@@ -112,7 +112,8 @@ sp_voc_set_frequency(voc, freq);
 sp_voc_set_breathiness(voc, breath);
 
 if(sp_voc_get_counter(voc) == 0) {
-    sp_voc_set_tongue_shape(voc, 40.0 * pos, diameter * 3.5);
+    sp_voc_set_velum(voc, 0.01 + 0.8 * nasal);
+    sp_voc_set_tongue_shape(voc, 12 + 16.0 * pos, diameter * 3.5);
 }
 
 sp_voc_compute(pd->sp, voc, &out);
