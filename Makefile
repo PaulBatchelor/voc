@@ -42,8 +42,8 @@ plot.c: voc.c
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-sp/%.tex:sp/%.sp
-	cat $< | sed "s/_/\\\\_/g" | sed "s/#/\\\\#/" | sed "s/$$/\\n/"> $@ 
+sp/%.tex: sp/%.sp
+	sporth_tex $< > $@ 
 
 voc.so: ugen.c voc.c
 	$(CC) $(CFLAGS) -DBUILD_SPORTH_UGEN -shared voc.o $< -o $@ $(LDFLAGS)
@@ -73,3 +73,4 @@ clean:
 	rm -rf plots/*.eps
 	rm -rf plots/*.dat
 	rm -rf version
+	rm -rf sp/*.tex
