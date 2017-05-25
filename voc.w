@@ -6,11 +6,12 @@
 {\bigfont Voc}
 
 {\mediumfont A vocal tract physical model implementation.}
+\subsec{By Paul Batchelor}
 \stopcenter
 \vfil \break
 \bigheader{Introduction}
 
-The following document describes {\it Voc}, (which will be) an implementation 
+The following document describes {\it Voc}, an implementation 
 of a vocal tract physical model. 
 
 \subsec{Motivations and Goals}
@@ -59,6 +60,20 @@ an "overview" section. This section serves as the entry point in generating
 the C amalgamation file |voc.c|. Complying with the constraints of |CWEB|, 
 the corresponding sections will appear at the bottom of this section.
 
+
+\medskip
+
+The main sections of this program are as follows: 
+
+
+@c
+@<Headers@>@/
+@<The Glottis@>@/
+@<The Vocal Tract@>@/
+@<Top Level...@>@/
+
+@* Supplementary Files.
+
 In addition to the main C amalgamation, there are a few other files
 that this literate program generates:
 
@@ -73,39 +88,10 @@ this header file along with the C file.
 can then be fed into gnuplot for plotting. It is used to generate the plots
 you see in this document.
 
-\medskip
+|@(ugen.c@>| provides an implementation of Voc as a Sporth unit generator, 
+offering 5 dimensions of control. 
 
-The main sections of this program are as follows: 
-
-@c
-@<Headers@>@/
-@<The Glottis@>@/
-@<The Vocal Tract@>@/
-@<Top Level...@>@/
-@q TODO: put the sporth ugen inside of applications and examples @>
-@<The Sporth Unit Generator Function@>@/
-
-@* External Sporth UGens.
-
-In Sporth, one has the ability to dynamically load custom unit-generators
-or, {\it ugens}, into Sporth. Such a unit generator can be seen here in 
-Sporth code:
-
-\sporthcode{test}
-
-In the code above, the plugin file is loaded via \sword{fl} (function load)
-and saved into the table \sword{\_voc}. An instance of \sword{\_voc} is created
-with \sword{fe} (function execute). Finally, the dynamic plugin is closed
-with \sword{fc} (function close). 
-
-Custom unit generators are written in C using a special interface provided by 
-the Sporth API. The functionality of an external sporth ugen is nearly identical
-to an internal one, with exceptions being the function definition
-and how custom user-data is handled. Besides that, they can be treated as
-equivalent. 
-
-@i ugen
-
+@* The Header.
 @ The header section consists of header inclusion, and definition of C-structs. 
 The system-wide header files include |stdlib.h| for things like |malloc()|.
 Standard math library functions from |math.h| are used. 
@@ -149,16 +135,6 @@ see |@<voc.h@>|
 
 @<Data Structures...@>
 
-@ A dynamically loaded sporth unit-generated such as the one defined here 
-needs to have a globally accessible function called |sporth_return_ugen|. 
-All this function needs to do is return the ugen function, which is of type
-|plumber_dyn_func|. 
-@<Return Function@>=
-@[plumber_dyn_func sporth_return_ugen() @]
-{
-    return sporth_gain;
-}
-
 @i data
 
 @i top
@@ -170,6 +146,9 @@ All this function needs to do is return the ugen function, which is of type
 @i header 
 
 @i debug
+
+@i ugen
+
 @* References.
 \bibliography{ref}
 \bibliographystyle{plain}

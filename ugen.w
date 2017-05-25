@@ -1,3 +1,21 @@
+@* External Sporth UGens.
+
+In Sporth, one has the ability to dynamically load custom unit-generators
+or, {\it ugens}, into Sporth. Such a unit generator can be seen here in 
+Sporth code:
+
+\sporthcode{test}
+
+In the code above, the plugin file is loaded via \sword{fl} (function load)
+and saved into the table \sword{\_voc}. An instance of \sword{\_voc} is created
+with \sword{fe} (function execute). Finally, the dynamic plugin is closed
+with \sword{fc} (function close). 
+
+Custom unit generators are written in C using a special interface provided by 
+the Sporth API. The functionality of an external sporth ugen is nearly identical
+to an internal one, with exceptions being the function definition
+and how custom user-data is handled. Besides that, they can be treated as
+equivalent. 
 \subsec{Anatomy of the Sporth Unit Generator.}
 
 The entirety of the Sporth unit generator is contained within 
@@ -19,9 +37,15 @@ These states are executed in order:
 \par
 \endgroup
 
-@<The Sporth Unit...@>=
-#ifdef BUILD_SPORTH_UGEN
-static int sporth_gain(plumber_data *pd, sporth_stack *stack, void **ud)
+@(ugen.c@>=
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
+#include <soundpipe.h>
+#include <sporth.h>
+#include "voc.h"
+
+static int sporth_voc(plumber_data *pd, sporth_stack *stack, void **ud)
 {
     sp_voc *voc;
     SPFLOAT out;
@@ -32,18 +56,18 @@ static int sporth_gain(plumber_data *pd, sporth_stack *stack, void **ud)
     SPFLOAT nasal;
 
     switch(pd->mode) {
-        case PLUMBER_CREATE:
+        case PLUMBER_CREATE:@/
             @<Creation@>;
             break;
-        case PLUMBER_INIT: 
+        case PLUMBER_INIT: @/
             @<Initialization@>;
             break;
 
-        case PLUMBER_COMPUTE:
+        case PLUMBER_COMPUTE: @/
             @<Computation@>;
             break;
 
-        case PLUMBER_DESTROY:
+        case PLUMBER_DESTROY: @/
             @<Destruction@>;
             break;
     }
@@ -51,7 +75,6 @@ static int sporth_gain(plumber_data *pd, sporth_stack *stack, void **ud)
 }
 
 @<Return Function@>@/
-#endif
 
 @ 
 The first state executed is {\bf creation}, denoted by the macro 
@@ -128,3 +151,12 @@ It is here that the top-level function |@<Voc Dest...@>| is called.
 voc = *ud;
 sp_voc_destroy(&voc);
 
+@ A dynamically loaded sporth unit-generated such as the one defined here 
+needs to have a globally accessible function called |sporth_return_ugen|. 
+All this function needs to do is return the ugen function, which is of type
+|plumber_dyn_func|. 
+@<Return Function@>=
+@[plumber_dyn_func sporth_return_ugen() @]
+{
+    return sporth_voc;
+}

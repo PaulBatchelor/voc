@@ -4,7 +4,7 @@ Broadly speaking, the top-level functions are in charge of computing
 samples for the DSP inner-loop before, after, and during runtime. They get their
 name from the fact that they are the top level of abstraction in the program.
 These are the functions that get called in the Sporth Unit Generator 
-implementation |@<The Sporth Unit...@>|. 
+implementation |@(ugen.c@>|. 
 
 
 @<Top Level Functions@>=

@@ -1,4 +1,3 @@
-OBJ=voc.c
 CFLAGS=-fPIC -Wall -ansi -g -pedantic -O3
 SP_LDFLAGS = -lsoundpipe -lsndfile -lm
 LDFLAGS=-lsporth $(SP_LDFLAGS) -lpthread -ldl
@@ -43,8 +42,8 @@ plot.c: voc.c
 sp/%.tex:sp/%.sp
 	cat $< | sed "s/_/\\\\_/g" | sed "s/#/\\\\#/" | sed "s/$$/\\n/"> $@ 
 
-voc.so: $(OBJ)
-	$(CC) $(CFLAGS) -DBUILD_SPORTH_UGEN -shared $(OBJ) -o $@ $(LDFLAGS)
+voc.so: ugen.c voc.c
+	$(CC) $(CFLAGS) -DBUILD_SPORTH_UGEN -shared voc.o $< -o $@ $(LDFLAGS)
 
 debug: debug.o voc.c
 	$(CC) $(CFLAGS) debug.o voc.c -o $@ $(SP_LDFLAGS)
