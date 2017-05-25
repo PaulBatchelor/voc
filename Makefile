@@ -19,7 +19,10 @@ default: voc.pdf
 
 program: voc.so
 
-voc.tex: voc.w macros.tex $(WEB) $(PLOTS) $(SPORTH_FILES)
+version: 
+	git rev-parse HEAD > version
+
+voc.tex: voc.w macros.tex $(WEB) $(PLOTS) $(SPORTH_FILES) version
 	cweave -x voc.w
 
 voc.dvi: voc.tex 
@@ -69,3 +72,4 @@ clean:
 	rm -rf plot
 	rm -rf plots/*.eps
 	rm -rf plots/*.dat
+	rm -rf version

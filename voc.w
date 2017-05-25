@@ -4,9 +4,13 @@
 
 \startcenter
 {\bigfont Voc}
-
-{\mediumfont A vocal tract physical model implementation.}
+\medskip
+{\mediumfont A vocal tract physical model implementation.} 
 \subsec{By Paul Batchelor}
+Git Hash: 
+{\tt
+\input version
+}
 \stopcenter
 \vfil \break
 \bigheader{Introduction}
