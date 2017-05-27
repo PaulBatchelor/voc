@@ -45,7 +45,7 @@ plot.c: voc.c
 sp/%.tex: sp/%.sp
 	sporth_tex $< > $@ 
 
-voc.so: ugen.c voc.c
+voc.so: ugen.c voc.o
 	$(CC) $(CFLAGS) -DBUILD_SPORTH_UGEN -shared voc.o $< -o $@ $(LDFLAGS)
 
 debug: debug.o voc.c
