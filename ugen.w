@@ -87,7 +87,7 @@ It is here that the top-level function |@<Voc Crea...@>| is called.
 
 sp_voc_create(&voc);
 *ud = voc;
-if(sporth_check_args(stack, "f") != SPORTH_OK) {
+if(sporth_check_args(stack, "fffff") != SPORTH_OK) {
     plumber_print(pd, "Voc: not enough arguments!\n");    
 }
 nasal = sporth_stack_pop_float(stack);

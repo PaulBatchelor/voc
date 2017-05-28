@@ -14,6 +14,7 @@ implementation |@(ugen.c@>|.
 @<Voc Compute@>@/
 @<Voc Set Frequency@>@/
 @<Voc Get Tract Diameters@>@/
+@<Voc Get Current Tract Diameters@>@/
 @<Voc Get Tract Size@>@/
 @<Voc Get Nose Diameters@>@/
 @<Voc Get Nose Size@>@/
@@ -95,6 +96,17 @@ tract.
 SPFLOAT* sp_voc_get_tract_diameters(sp_voc *voc)
 {
     return voc->tr.target_diameter;
+}
+
+@ Similar to |sp_voc_get_tract_diameters| in |@<Voc Get Tract Diameters@>|,
+the function |sp_voc_get_current_tract_diameters| returns the diameters
+of the tract. The difference is that this function returns the 
+actual slewed diameters used in |@<Reshape Vocal Tract@>|, rather than 
+the target diameters. 
+@<Voc Get Current Tract Diameters@>=
+SPFLOAT* sp_voc_get_current_tract_diameters(sp_voc *voc)
+{
+    return voc->tr.diameter;
 }
 
 @ This getter function returns the size of the vocal tract. 

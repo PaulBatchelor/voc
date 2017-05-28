@@ -198,6 +198,9 @@ static void plot_tongue_shape(int num)
         case 3:
             sp_voc_set_tongue_shape(voc, 20.5, 2.0);
             break;
+        case 4:
+            sp_voc_set_tongue_shape(voc, 24.8, 1.4);
+            break;
     }
 
     for(i = 0; i < size; i++) {
@@ -224,6 +227,8 @@ int main(int argc, char **argv)
         plot_tongue_shape(2);
     } else if(!strncmp(argv[1], "plots/tongueshape3.dat", 100)) {
         plot_tongue_shape(3);
+    } else if(!strncmp(argv[1], "plots/tongueshape4.dat", 100)) {
+        plot_tongue_shape(4);
     } else {
         fprintf(stderr, "Plot: could not find plot %s\n", argv[1]);
         exit(1);

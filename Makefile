@@ -8,6 +8,7 @@ PLOTS=plots/tract.eps plots/nose.eps \
 	  plots/tongueshape1.eps\
 	  plots/tongueshape2.eps\
 	  plots/tongueshape3.eps\
+	  plots/tongueshape4.eps\
 
 WEB=data.w top.w ugen.w glottis.w header.w debug.w tract.w
 
@@ -59,6 +60,9 @@ plots/%.dat: plot
 
 plots/%.eps: plots/%.plt  plots/%.dat
 	gnuplot $<
+
+libvoc.a: voc.o
+	$(AR) rcs $@ voc.o
 
 clean:
 	rm -rf voc.tex *.dvi *.idx *.log *.pdf *.sc *.toc *.scn 
