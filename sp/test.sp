@@ -11,6 +11,8 @@ _voc "./voc.so" fl
 0 
 _voc fe 
 
+# Add reverberation using the Zita reverberator 
 dup dup 1 2 8000 zrev drop -3 ampdb * + 
 
+# close the plugin
 _voc fc

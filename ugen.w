@@ -1,4 +1,4 @@
-@* External Sporth UGens.
+@* External Sporth Plugins.
 
 In Sporth, one has the ability to dynamically load custom unit-generators
 or, {\it ugens}, into Sporth. Such a unit generator can be seen here in 
