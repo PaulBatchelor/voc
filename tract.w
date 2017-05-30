@@ -149,9 +149,6 @@ static void tract_compute(sp_data *sp, tract *tr,
     @<Update Left/Right delay lines...@>@/
     @<Calculate Nose Scattering Junctions@>@/
     @<Update Nose Left/Right delay lines...@>@/
-
-
-
 }
 
 @ @<Calculate Scattering Junctions@>=

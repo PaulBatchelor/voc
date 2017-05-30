@@ -64,19 +64,20 @@ an "overview" section. This section serves as the entry point in generating
 the C amalgamation file |voc.c|. Complying with the constraints of |CWEB|, 
 the corresponding sections will appear at the bottom of this section.
 
+|@<Headers@>| is the header section of the C file (not be confused with
+the separate header file |@(voc.h@>|. This is where all the system includes,
+macros, global data, and structs are declared.
+
+|@<The Glottis@>| is the component of Voc concerned with producing the glottal
+excitation signal.
+
+|@<The Vocal Tract@>| is implementation of the physical waveguide of the
+vocal tract. 
+
+|@<Top Level...@>| is the section consisting of all public functions for 
+controlling Voc, from instantiation to parametric control. 
 
 \medskip
-
-The main sections of this program are as follows: 
-
-
-@c
-@<Headers@>@/
-@<The Glottis@>@/
-@<The Vocal Tract@>@/
-@<Top Level...@>@/
-
-@* Supplementary Files.
 
 In addition to the main C amalgamation, there are a few other files
 that this literate program generates:
@@ -93,7 +94,19 @@ can then be fed into gnuplot for plotting. It is used to generate the plots
 you see in this document.
 
 |@(ugen.c@>| provides an implementation of Voc as a Sporth unit generator, 
-offering 5 dimensions of control. 
+offering 5 dimensions of control. In addition the main Sporth plugin, there
+are also smaller unit generators implementing portions of Voc, such as
+the vocal tract filter. 
+
+\medskip
+
+
+@c
+@<Headers@>@/
+@<The Glottis@>@/
+@<The Vocal Tract@>@/
+@<Top Level...@>@/
+
 @i data
 
 @i top
