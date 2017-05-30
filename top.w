@@ -12,6 +12,7 @@ implementation |@(ugen.c@>|.
 @<Voc Destroy@>@/
 @<Voc Init...@>@/
 @<Voc Compute@>@/
+@<Voc Tract Compute@>@/
 @<Voc Set Frequency@>@/
 @<Voc Get Tract Diameters@>@/
 @<Voc Get Current Tract Diameters@>@/
@@ -76,6 +77,37 @@ int sp_voc_compute(sp_data *sp, sp_voc *voc, SPFLOAT *out)
 
 
     *out = voc->buf[voc->counter];
+    voc->counter = (voc->counter + 1) % 512;
+    return SP_OK;
+}
+
+@ The function |sp_voc_compute_tract| computes the vocal tract component of
+Voc separately from the glottis. This provides the ability to use any input
+signal as an glottal excitation, turning the model into a formant filter.
+Compared to the main implementation in |@<Voc Compute@>|, this function 
+does not have the 512 sample delay. 
+@<Voc Tract Compute@>=
+int sp_voc_compute_tract(sp_data *sp, sp_voc *voc, SPFLOAT *in, SPFLOAT *out)
+{
+    SPFLOAT vocal_output;
+    SPFLOAT lambda1, lambda2;
+
+    if(voc->counter == 0) {
+        tract_reshape(&voc->tr); 
+        tract_calculate_reflections(&voc->tr); 
+    }
+
+    vocal_output = 0;
+    lambda1 = (SPFLOAT) voc->counter / 512;
+    lambda2 = (SPFLOAT) (voc->counter + 0.5) / 512;
+   
+    tract_compute(sp, &voc->tr, *in, lambda1);
+    vocal_output += voc->tr.lip_output + voc->tr.nose_output;
+    tract_compute(sp, &voc->tr, *in, lambda2);
+    vocal_output += voc->tr.lip_output + voc->tr.nose_output;
+
+
+    *out = vocal_output;
     voc->counter = (voc->counter + 1) % 512;
     return SP_OK;
 }
