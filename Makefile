@@ -2,7 +2,7 @@ CFLAGS=-fPIC -Wall -ansi -g -pedantic -O3
 SP_LDFLAGS = -lsoundpipe -lsndfile -lm
 LDFLAGS=-lsporth $(SP_LDFLAGS) -lpthread -ldl
 
-SPORTH_FILES= sp/test.tex
+SPORTH_FILES= sp/test.tex sp/chant.tex sp/unya.tex sp/rant.tex
 
 PLOTS=plots/tract.eps plots/nose.eps \
 	  plots/tongueshape1.eps\

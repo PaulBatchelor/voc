@@ -1,5 +1,12 @@
 @* External Sporth Plugins.
 
+Sporth, a stack-based synthesis language, is the preferred tool of choice for 
+sound design experimentation and prototyping with Voc.
+A version of Voc has been ported to Sporth as third party plugin, known
+as an {\it external Sporth Plugin}.
+
+
+\subsec{Sporth Plugins as Seen from Sporth}
 In Sporth, one has the ability to dynamically load custom unit-generators
 or, {\it ugens}, into Sporth. Such a unit generator can be seen here in 
 Sporth code:
@@ -11,21 +18,22 @@ and saved into the table \sword{\_voc}. An instance of \sword{\_voc} is created
 with \sword{fe} (function execute). Finally, the dynamic plugin is closed
 with \sword{fc} (function close). 
 
+\subsec{Sporth plugins as seen from C.}
+
 Custom unit generators are written in C using a special interface provided by 
 the Sporth API. The functionality of an external sporth ugen is nearly identical
 to an internal one, with exceptions being the function definition
-and how custom user-data is handled. Besides that, they can be treated as
-equivalent. 
-\subsec{Anatomy of the Sporth Unit Generator.}
+and how custom user-data is handled. Besides that, they can be seen as
+equivalent.
 
 The entirety of the Sporth unit generator is contained within 
 a single subroutine, declared |static| so as to not clutter the global
 namespace. The crux of the function is a case switch outlining four unique
 states of operation, which define the {\it lifecycle} of a Sporth ugen. This
 design concept comes from Soundpipe, the music DSP library that Sporth 
-is built on top of.
+is built on top of. 
 
-These states are executed in order:
+These states are executed in this order:
 
 \begingroup
 \smallskip
@@ -33,9 +41,15 @@ These states are executed in order:
 \item{1.} Create: allocates memory for the DSP module
 \item{2.} Initialize: zeros out and sets up default values
 \item{3.} Compute: Computes an audio-rate sample (or samples)
-\item{4.} Destroy: frees all memory allocated
+\item{4.} Destroy: frees all memory previously allocated in Create
 \par
 \endgroup
+
+Create and init are called once during runtime, compute is called as many
+times as needed while the program is running, and destroy is called
+once when the program is stopped. 
+
+The code below shows the outline for the main Sporth Ugen. 
 
 @(ugen.c@>=
 #include <stdlib.h>
@@ -239,4 +253,17 @@ int sporth_return_ugen_multi(int n, plumber_dyn_func *f)
     *f = sporth_functions[n];
     return PLUMBER_OK;
 }
+
+@* Sporth Code Examples.
+
+Here are some sporth code examples.
+
+\subsec{Chant}
+\sporthcode{chant}
+
+\subsec{Rant}
+\sporthcode{rant}
+
+\subsec{Unya}
+\sporthcode{unya}
 
