@@ -25,21 +25,29 @@ implementation |@(ugen.c@>|.
 @<Voc Set Breathiness@>@/
 @<Voc Set Velum@>@/
 
-@ @<Voc Create@>=
+@ In the function |sp_voc_create|, an instance of Voc is created via |malloc|.
+    
+@<Voc Create@>=
 int sp_voc_create(sp_voc **voc)
 {
     *voc = malloc(sizeof(sp_voc));
     return SP_OK;
 }
 
-@ @<Voc Destroy@>=
+@ As a counterpart to |sp_voc_compute|, |sp_voc_destroy| frees all data
+previous allocated.
+
+@<Voc Destroy@>=
 int sp_voc_destroy(sp_voc **voc)
 {
     free(*voc);
     return SP_OK;
 }
 
-@ @<Voc Initialization@>=
+@ After data has been allocated with |sp_voc_create|, it must be initialized 
+with |sp_voc_init|. 
+
+@<Voc Initialization@>=
 int sp_voc_init(sp_data *sp, sp_voc *voc)
 {
     glottis_init(&voc->glot, sp->sr); /* initialize glottis */
@@ -48,7 +56,11 @@ int sp_voc_init(sp_data *sp, sp_voc *voc)
     return SP_OK;
 }
 
-@ @<Voc Compute@>=
+@ The function |sp_voc_compute| is called during runtime to generate audio.
+This computation function will generate a single sample of audio and store it
+in the |SPFLOAT| pointer |*out|. 
+
+@<Voc Compute@>=
 int sp_voc_compute(sp_data *sp, sp_voc *voc, SPFLOAT *out)
 {
     SPFLOAT vocal_output, glot;

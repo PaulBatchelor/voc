@@ -64,6 +64,8 @@ an "overview" section. This section serves as the entry point in generating
 the C amalgamation file |voc.c|. Complying with the constraints of |CWEB|, 
 the corresponding sections will appear at the bottom of this section.
 
+\subsec{The Core Voc Components}
+
 |@<Headers@>| is the header section of the C file (not be confused with
 the separate header file |@(voc.h@>|. This is where all the system includes,
 macros, global data, and structs are declared.
@@ -77,7 +79,7 @@ vocal tract.
 |@<Top Level...@>| is the section consisting of all public functions for 
 controlling Voc, from instantiation to parametric control. 
 
-\medskip
+\subsec{Supplementary Files}
 
 In addition to the main C amalgamation, there are a few other files
 that this literate program generates:
