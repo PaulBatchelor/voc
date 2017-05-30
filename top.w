@@ -87,7 +87,7 @@ signal as an glottal excitation, turning the model into a formant filter.
 Compared to the main implementation in |@<Voc Compute@>|, this function 
 does not have the 512 sample delay. 
 @<Voc Tract Compute@>=
-int sp_voc_compute_tract(sp_data *sp, sp_voc *voc, SPFLOAT *in, SPFLOAT *out)
+int sp_voc_tract_compute(sp_data *sp, sp_voc *voc, SPFLOAT *in, SPFLOAT *out)
 {
     SPFLOAT vocal_output;
     SPFLOAT lambda1, lambda2;
@@ -107,7 +107,7 @@ int sp_voc_compute_tract(sp_data *sp, sp_voc *voc, SPFLOAT *in, SPFLOAT *out)
     vocal_output += voc->tr.lip_output + voc->tr.nose_output;
 
 
-    *out = vocal_output;
+    *out = vocal_output * 0.125;
     voc->counter = (voc->counter + 1) % 512;
     return SP_OK;
 }

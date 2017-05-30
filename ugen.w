@@ -160,3 +160,83 @@ All this function needs to do is return the ugen function, which is of type
 {
     return sporth_voc;
 }
+
+@ \subsec{A Ugen for the Vocal Tract Model}
+@(ugen.c@> +=
+
+static int sporth_tract(plumber_data *pd, sporth_stack *stack, void **ud)
+{
+    sp_voc *voc;
+    SPFLOAT out;
+    SPFLOAT pos;
+    SPFLOAT diameter;
+    SPFLOAT nasal;
+    SPFLOAT in;
+
+    switch(pd->mode) {
+        case PLUMBER_CREATE:@/
+            sp_voc_create(&voc);
+            *ud = voc;
+            if(sporth_check_args(stack, "ffff") != SPORTH_OK) {
+                plumber_print(pd, "Voc: not enough arguments!\n");    
+            }
+            nasal = sporth_stack_pop_float(stack);
+            diameter = sporth_stack_pop_float(stack);
+            pos = sporth_stack_pop_float(stack);
+            in = sporth_stack_pop_float(stack);
+
+            sporth_stack_push_float(stack, 0.0);
+            break;
+        case PLUMBER_INIT: @/
+            voc = *ud;
+            sp_voc_init(pd->sp, voc);
+            nasal = sporth_stack_pop_float(stack);
+            diameter = sporth_stack_pop_float(stack);
+            pos = sporth_stack_pop_float(stack);
+            in = sporth_stack_pop_float(stack);
+
+            sporth_stack_push_float(stack, 0.0);
+            break;
+        case PLUMBER_COMPUTE: @/
+            voc = *ud;
+            nasal = sporth_stack_pop_float(stack);
+            diameter = sporth_stack_pop_float(stack);
+            pos = sporth_stack_pop_float(stack);
+            in = sporth_stack_pop_float(stack);
+
+            if(sp_voc_get_counter(voc) == 0) {
+                sp_voc_set_velum(voc, 0.01 + 0.8 * nasal);
+                sp_voc_set_tongue_shape(voc, 12 + 16.0 * pos, diameter * 3.5);
+            }
+
+            sp_voc_tract_compute(pd->sp, voc, &in, &out);
+            sporth_stack_push_float(stack, out);
+            break;
+        case PLUMBER_DESTROY: @/
+            voc = *ud;
+            sp_voc_destroy(&voc);
+            break;
+    }
+
+    return PLUMBER_OK;
+}
+
+@ \subsec{A multi ugen plugin implementation}
+New Sporth developments contemporary with the creation of Voc have lead to
+the development of Sporth plugins with multiple ugens. 
+
+@(ugen.c@>+= 
+static const plumber_dyn_func sporth_functions[] = {
+    sporth_voc,
+    sporth_tract,
+};
+
+int sporth_return_ugen_multi(int n, plumber_dyn_func *f) 
+{
+    if(n < 0 || n > 1) {
+        return PLUMBER_NOTOK;
+    }
+    *f = sporth_functions[n];
+    return PLUMBER_OK;
+}
+
