@@ -140,51 +140,63 @@ static void tract_compute(sp_data *sp, tract *tr,
     SPFLOAT @, in, 
     SPFLOAT @, lambda)
 {
-    SPFLOAT r, w;
+    @/ SPFLOAT @, r, w;
     int i;
 
-    tr->junction_outR[0] = tr->L[0] * tr->glottal_reflection + in;
-    tr->junction_outL[tr->n] = tr->R[tr->n - 1] * tr->lip_reflection;
+    @/
+    @<Calculate Scattering Junctions@>@/
+    @<Calculate Scattering for Nose...@>@/
+    @<Update Left/Right delay lines...@>@/
+    @<Calculate Nose Scattering Junctions@>@/
+    @<Update Nose Left/Right delay lines...@>@/
 
-    for(i = 1; i < tr->n; i++) {
-        r = tr->reflection[i] * (1 - lambda) + tr->new_reflection[i] * lambda;
-        w = r * (tr->R[i - 1] + tr->L[i]);
-        tr->junction_outR[i] = tr->R[i - 1] - w;
-        tr->junction_outL[i] = tr->L[i] + w;
-    }
 
-    i = tr->nose_start;
-    r = tr->new_reflection_left * (1-lambda) + tr->reflection_left*lambda;
-    tr->junction_outL[i] = r*tr->R[i-1] + (1+r)*(tr->noseL[0]+tr->L[i]);
-    r = tr->new_reflection_right * (1 - lambda) + tr->reflection_right * lambda;
-    tr->junction_outR[i] = r*tr->L[i] + (1+r)*(tr->R[i-1]+tr->noseL[0]);
-    r = tr->new_reflection_nose * (1 - lambda) + tr->reflection_nose * lambda;
-    tr->nose_junc_outR[0] = r * tr->noseL[0]+(1+r)*(tr->L[i]+tr->R[i-1]);
-
-    for(i = 0; i < tr->n; i++) {
-        tr->R[i] = tr->junction_outR[i]*0.999;
-        tr->L[i] = tr->junction_outL[i + 1]*0.999;
-    }
-
-    tr->lip_output = tr->R[tr->n - 1];
-
-    tr->nose_junc_outL[tr->nose_length] = 
-        tr->noseR[tr->nose_length-1] * tr->lip_reflection;
-
-    for(i = 1; i < tr->nose_length; i++) {
-        w = tr->nose_reflection[i] * (tr->noseR[i-1] + tr->noseL[i]);
-        tr->nose_junc_outR[i] = tr->noseR[i - 1] - w;
-        tr->nose_junc_outL[i] = tr->noseL[i] + w;
-    }
-
-    for(i = 0; i < tr->nose_length; i++) {
-        tr->noseR[i] = tr->nose_junc_outR[i];
-        tr->noseL[i] = tr->nose_junc_outL[i + 1];
-    }
-
-    tr->nose_output = tr->noseR[tr->nose_length - 1];
 
 }
+
+@ @<Calculate Scattering Junctions@>=
+tr->junction_outR[0] = tr->L[0] * tr->glottal_reflection + in;
+tr->junction_outL[tr->n] = tr->R[tr->n - 1] * tr->lip_reflection;
+
+for(i = 1; i < tr->n; i++) {
+    r = tr->reflection[i] * (1 - lambda) + tr->new_reflection[i] * lambda;
+    w = r * (tr->R[i - 1] + tr->L[i]);
+    tr->junction_outR[i] = tr->R[i - 1] - w;
+    tr->junction_outL[i] = tr->L[i] + w;
+}
+
+@ @<Calculate Scattering for Nose@>=
+i = tr->nose_start;
+r = tr->new_reflection_left * (1-lambda) + tr->reflection_left*lambda;
+tr->junction_outL[i] = r*tr->R[i-1] + (1+r)*(tr->noseL[0]+tr->L[i]);
+r = tr->new_reflection_right * (1 - lambda) + tr->reflection_right * lambda;
+tr->junction_outR[i] = r*tr->L[i] + (1+r)*(tr->R[i-1]+tr->noseL[0]);
+r = tr->new_reflection_nose * (1 - lambda) + tr->reflection_nose * lambda;
+tr->nose_junc_outR[0] = r * tr->noseL[0]+(1+r)*(tr->L[i]+tr->R[i-1]);
+
+@ @<Update Left/Right delay lines and set lip output@>=
+for(i = 0; i < tr->n; i++) {
+    tr->R[i] = tr->junction_outR[i]*0.999;
+    tr->L[i] = tr->junction_outL[i + 1]*0.999;
+}
+tr->lip_output = tr->R[tr->n - 1];
+
+@ @<Calculate Nose Scattering Junctions@>=
+tr->nose_junc_outL[tr->nose_length] = 
+    tr->noseR[tr->nose_length-1] * tr->lip_reflection;
+
+for(i = 1; i < tr->nose_length; i++) {
+    w = tr->nose_reflection[i] * (tr->noseR[i-1] + tr->noseL[i]);
+    tr->nose_junc_outR[i] = tr->noseR[i - 1] - w;
+    tr->nose_junc_outL[i] = tr->noseL[i] + w;
+}
+
+@ @<Update Nose Left/Right delay lines and set nose output@>=
+for(i = 0; i < tr->nose_length; i++) {
+    tr->noseR[i] = tr->nose_junc_outR[i];
+    tr->noseL[i] = tr->nose_junc_outL[i + 1];
+}
+tr->nose_output = tr->noseR[tr->nose_length - 1];
 
 @ The function |tract_calculate_reflections| computes reflection 
 coefficients used in the scattering junction. Because this is a rather
