@@ -30,6 +30,7 @@ int sp_voc_compute(sp_data *sp, sp_voc *voc, SPFLOAT *out);
 int sp_voc_tract_compute(sp_data *sp, sp_voc *voc, SPFLOAT *in, SPFLOAT *out);
 
 void sp_voc_set_frequency(sp_voc *voc, SPFLOAT freq);
+SPFLOAT * sp_voc_get_frequency(sp_voc *voc);
 
 SPFLOAT* sp_voc_get_tract_diameters(sp_voc *voc);
 SPFLOAT* sp_voc_get_current_tract_diameters(sp_voc *voc);
@@ -41,6 +42,7 @@ void sp_voc_set_tongue_shape(sp_voc *voc,
     SPFLOAT tongue_diameter);
 void sp_voc_set_breathiness(sp_voc *voc, SPFLOAT breathiness);
 void sp_voc_set_velum(sp_voc *voc, SPFLOAT velum);
+SPFLOAT * sp_voc_get_velum(sp_voc *voc);
 
 void sp_voc_set_diameters(sp_voc *voc,
     int blade_start,
@@ -51,5 +53,6 @@ void sp_voc_set_diameters(sp_voc *voc,
     SPFLOAT *diameters);
 
 int sp_voc_get_counter(sp_voc *voc);
+
 
 #endif

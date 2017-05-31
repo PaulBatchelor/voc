@@ -16,9 +16,11 @@ CONFIG?=
 
 include $(CONFIG)
 
-default: voc.pdf 
+default: voc.pdf libvoc.a
 
-program: voc.so
+plugin: voc.so 
+
+library: libvoc.a
 
 version: 
 	git rev-parse HEAD > version
