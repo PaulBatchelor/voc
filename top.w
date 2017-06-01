@@ -135,12 +135,12 @@ void sp_voc_set_frequency(sp_voc *voc, SPFLOAT freq)
     voc->glot.freq = freq;
 }
 
-@ The function |sp_voc_get_frequency| returns a pointer to the variable holding
+@ The function |sp_voc_get_frequency_ptr| returns a pointer to the variable holding
 the frequency. This allows values to be set and read directly without. The
 use of a helper function. This function was notably created for use in a 
 demo using the GUI library Nuklear.
 @<Voc Get Frequency@>=
-SPFLOAT * sp_voc_get_frequency(sp_voc *voc)
+SPFLOAT * sp_voc_get_frequency_ptr(sp_voc *voc)
 {
     return &voc->glot.freq;
 }
@@ -290,13 +290,13 @@ void sp_voc_set_velum(sp_voc *voc, SPFLOAT velum)
     voc->tr.velum_target = velum;
 }
 
-@ The function |sp_voc_get_velum| returns the pointer associated with
+@ The function |sp_voc_get_velum_ptr| returns the pointer associated with
 the velum, allowing direct control of the velum parameter. This function was
 created for use with a demo requiring direct access.
 
 @<Voc Get Velum@>=
 
-SPFLOAT *sp_voc_get_velum(sp_voc *voc)
+SPFLOAT *sp_voc_get_velum_ptr(sp_voc *voc)
 {
     return &voc->tr.velum_target;
 }
