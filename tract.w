@@ -151,7 +151,11 @@ static void tract_compute(sp_data *sp, tract *tr,
     @<Update Nose Left/Right delay lines...@>@/
 }
 
-@ @<Calculate Scattering Junctions@>=
+@ A derivation of $w$ can be seen in section 2.5.2 of Jack Mullens 
+PhD dissertation {\it Physical Modelling of the Vocal Tract 
+with the 2D Digital Waveguide Mesh}.
+\cite{mullen2006physical}
+@<Calculate Scattering Junctions@>=
 tr->junction_outR[0] = tr->L[0] * tr->glottal_reflection + in;
 tr->junction_outL[tr->n] = tr->R[tr->n - 1] * tr->lip_reflection;
 
