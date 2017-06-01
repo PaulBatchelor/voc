@@ -66,7 +66,7 @@ static int sporth_voc(plumber_data *pd, sporth_stack *stack, void **ud)
     SPFLOAT freq;
     SPFLOAT pos;
     SPFLOAT diameter;
-    SPFLOAT breath;
+    SPFLOAT tenseness;
     SPFLOAT nasal;
 
     switch(pd->mode) {
@@ -105,7 +105,7 @@ if(sporth_check_args(stack, "fffff") != SPORTH_OK) {
     plumber_print(pd, "Voc: not enough arguments!\n");    
 }
 nasal = sporth_stack_pop_float(stack);
-breath = sporth_stack_pop_float(stack);
+tenseness = sporth_stack_pop_float(stack);
 diameter = sporth_stack_pop_float(stack);
 pos = sporth_stack_pop_float(stack);
 freq = sporth_stack_pop_float(stack);
@@ -124,7 +124,7 @@ It is here that the top-level function |@<Voc Init...@>| is called.
 voc = *ud;
 sp_voc_init(pd->sp, voc);
 nasal = sporth_stack_pop_float(stack);
-breath = sporth_stack_pop_float(stack);
+tenseness = sporth_stack_pop_float(stack);
 diameter = sporth_stack_pop_float(stack);
 pos = sporth_stack_pop_float(stack);
 freq = sporth_stack_pop_float(stack);
@@ -141,12 +141,12 @@ It is here that the top-level function |@<Voc Comp...@>| is called.
 @<Computation@>=
 voc = *ud;
 nasal = sporth_stack_pop_float(stack);
-breath = sporth_stack_pop_float(stack);
+tenseness = sporth_stack_pop_float(stack);
 diameter = sporth_stack_pop_float(stack);
 pos = sporth_stack_pop_float(stack);
 freq = sporth_stack_pop_float(stack);
 sp_voc_set_frequency(voc, freq);
-sp_voc_set_breathiness(voc, breath);
+sp_voc_set_tenseness(voc, tenseness);
 
 if(sp_voc_get_counter(voc) == 0) {
     sp_voc_set_velum(voc, 0.01 + 0.8 * nasal);

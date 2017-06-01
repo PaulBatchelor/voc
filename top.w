@@ -23,7 +23,7 @@ implementation |@(ugen.c@>|.
 @<Voc Set Diameters@>@/
 @<Voc Set Tongue Shape@>@/
 @<Voc Get Counter@>@/
-@<Voc Set Breathiness@>@/
+@<Voc Set Tenseness@>@/
 @<Voc Set Velum@>@/
 @<Voc Get Velum@>@/
 
@@ -273,11 +273,18 @@ int sp_voc_get_counter(sp_voc *voc)
 {
     return voc->counter;
 }
-@
-@<Voc Set Breathiness@>=
-void sp_voc_set_breathiness(sp_voc *voc, SPFLOAT breathiness)
+@ The function |sp_voc_set_tenseness| is used to set the tenseness variable,
+used when calculating glottal time coefficients in 
+|@<Set up Glottis Waveform@>|, and is the main factor in calculating 
+aspiration noise in |@<Glottis Computation@>|. Typically this is a value
+between 0 and 1. A value of 1 gives a full vocal sound, while a value of 0
+is all breathy. It is ideal to have a little bit of aspiration noise. 
+Empirically good values tend to be in the range of $[0.6,0.9]$. 
+
+@<Voc Set Tenseness@>=
+void sp_voc_set_tenseness(sp_voc *voc, SPFLOAT tenseness)
 {
-    voc->glot.tenseness = breathiness;
+    voc->glot.tenseness = tenseness;
 }
 
 @ The function |sp_voc_set_velum| sets the {\it velum}, or soft pallette of 
