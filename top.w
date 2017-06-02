@@ -24,6 +24,7 @@ implementation |@(ugen.c@>|.
 @<Voc Set Tongue Shape@>@/
 @<Voc Get Counter@>@/
 @<Voc Set Tenseness@>@/
+@<Voc Get Tenseness@>@/
 @<Voc Set Velum@>@/
 @<Voc Get Velum@>@/
 
@@ -285,6 +286,17 @@ Empirically good values tend to be in the range of $[0.6,0.9]$.
 void sp_voc_set_tenseness(sp_voc *voc, SPFLOAT tenseness)
 {
     voc->glot.tenseness = tenseness;
+}
+
+@ The function |sp_voc_get_tenseness_ptr| returns an |SPFLOAT| pointer to the
+parameter value directly controlling tenseness. This function is useful for
+GUI frontends that use direct pointer manipulation like Nuklear, the
+cross-platform UI framework used to make a demo for Voc. 
+
+@<Voc Get Tenseness@> =
+SPFLOAT * sp_voc_get_tenseness_ptr(sp_voc *voc)
+{
+    return &voc->glot.tenseness;
 }
 
 @ The function |sp_voc_set_velum| sets the {\it velum}, or soft pallette of 

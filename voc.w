@@ -11,7 +11,10 @@ Git Hash:
 {\tt
 \input version
 }
+\medskip
 \stopcenter
+\epsfxsize=40pt
+\epsfbox{by-sa.eps}
 \vfil \break
 \bigheader{Introduction}
 
