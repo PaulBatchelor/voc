@@ -126,6 +126,8 @@ the vocal tract filter.
 
 @i ugen
 
+@i sp
+
 @* References.
 \bibliography{ref}
 \bibliographystyle{plain}

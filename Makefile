@@ -10,7 +10,7 @@ PLOTS=plots/tract.eps plots/nose.eps \
 	  plots/tongueshape3.eps\
 	  plots/tongueshape4.eps\
 
-WEB=data.w top.w ugen.w glottis.w header.w debug.w tract.w
+WEB=data.w top.w ugen.w glottis.w header.w debug.w tract.w sp.w
 
 CONFIG?=
 
