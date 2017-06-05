@@ -11,6 +11,7 @@ detail.
 @<The Vocal Tract@>=
 @<Calculate Vocal Tract Reflections @>@/
 @<Calculate Vocal Tract Nose Reflections @>@/
+@<Vocal Tract Transients@>@/
 @<Reshape Vocal Tract @>@/
 @<Vocal Tract Init...@>@/
 @<Vocal Tract Computation...@>@/
@@ -323,3 +324,33 @@ static void tract_reshape(tract *tr)
             amount * 0.25, amount * 0.1);
     tr->noseA[0] = tr->nose_diameter[0] * tr->nose_diameter[0];
 }
+
+@ In Pink Trombone, there is a special handling of diameters that are exactly
+zero. From a physical point of view, air is completly blocked, and this 
+obstruction of air produces a transient "click" sound. To simulate this, 
+any obstructions are noted during the reshaping of the vocal tract 
+(see |@<Reshape...@>|), and the latest obstruction position is noted and pushed
+onto a stack of transients. During the vocal tract computation, the exponential
+damping contributes to the overal amplitude of the left-going and right-going
+delay lines at that precise diameter location. 
+
+% TODO: Wouldn't it be nice to have a plot of what the transient looks like?
+% TODO: add data structure. 
+
+@<Vocal Tract Transients@>=
+@<Add Transient@>@/
+@<Remove Transient@>@/
+@<Process Transients@>@/
+
+@ Any obstructions noted during |@<Reshape...@>| must be appended to the list 
+of previous transients. 
+@<Add Transient@>=
+
+@ When a transient has lived it's lifetime, it must be removed from the list of
+transients. 
+@<Remove Transient@>=
+
+@ Transients are processed during |@<Vocal Tract Computation@>|. The transient
+list is iterated through, their contributions are made to the Left and Right 
+delay lines. 
+@<Process Transients@>=
