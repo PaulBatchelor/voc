@@ -311,7 +311,7 @@ static void tract_reshape(tract *tr)
         diameter = tr->diameter[i];
         target_diameter = tr->target_diameter[i];
 
-        if(diameter < EPSILON) current_obstruction = i;
+        if(diameter < 0.001) current_obstruction = i;
 
         if(i < tr->nose_start) slow_return = 0.6;
         else if(i >= tr->tip_start) slow_return = 1.0;
@@ -416,8 +416,8 @@ static int append_transient(transient_pool *pool, int position)
     pool->size++;
     t->is_free = 0;
     t->time_alive = 0;
-    t->lifetime = 0.2;
-    t->strength = 1.0;
+    t->lifetime = 0.15;
+    t->strength = 0.6;
     t->exponent = 200;
     pool->next_free = -1;
     return 0;
