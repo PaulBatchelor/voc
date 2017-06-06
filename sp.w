@@ -141,8 +141,7 @@ int t_voc(sp_test *tst, sp_data *sp, const char *hash)
     sp_osc_destroy(&ud.osc);
 
     if(fail) return SP_NOT_OK;
-    /* fail by default */
-    else return SP_NOT_OK;
+    else return SP_OK;
 }
 
 @ \subsec{Soundpipe Perfomance Test}
