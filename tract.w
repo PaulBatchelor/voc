@@ -34,6 +34,8 @@ static void tract_init(sp_data *sp, tract *tr)
     tr->nose_diameter[0] = tr->velum_target;
 
     tr->block_time = 512.0 / (SPFLOAT)sp->sr;
+    tr->T = 1.0 / (SPFLOAT)sp->sr;
+    @<Initialize Transient Pool@>
 }
 
 @ @<Initialize Tract Constants and Variables@>=
@@ -71,14 +73,12 @@ memset(tr->new_reflection, 0, (tr->n + 1) * sizeof(SPFLOAT));
 memset(tr->junction_outL, 0, (tr->n + 1) * sizeof(SPFLOAT));
 memset(tr->junction_outR, 0, (tr->n + 1) * sizeof(SPFLOAT));
 memset(tr->A, 0, tr->n * sizeof(SPFLOAT));
-memset(tr->max_amplitude, 0, tr->n * sizeof(SPFLOAT));
 memset(tr->noseL, 0, tr->nose_length * sizeof(SPFLOAT));
 memset(tr->noseR, 0, tr->nose_length * sizeof(SPFLOAT));
 memset(tr->nose_junc_outL, 0, (tr->nose_length + 1) * sizeof(SPFLOAT));
 memset(tr->nose_junc_outR, 0, (tr->nose_length + 1) * sizeof(SPFLOAT));
 memset(tr->nose_diameter, 0, tr->nose_length * sizeof(SPFLOAT));
 memset(tr->noseA, 0, tr->nose_length * sizeof(SPFLOAT));
-memset(tr->nose_max_amp, 0, tr->nose_length * sizeof(SPFLOAT));
 
 @ The cylindrical diameters approximating the vocal tract are set up
 below. These diameters will be modified and shaped by user control to
@@ -131,11 +131,9 @@ As the original implementation describes it, this function is designed
 to run at twice the sampling rate. For this reason, it is called twice 
 in the top level call back (see |@<Voc Create@>|). 
 
-At the moment, |tract_compute| has two input arguments. The variable |in|
+|tract_compute| has two input arguments. The variable |in|
 is the glottal excitation signal. The |lambda| variable is a coefficient
 for a linear crossfade along the buffer block, used for parameter smoothing.
-In future iterations, the linear crossfade will be removed in place of one-pole 
-smoothing filters. 
 @<Vocal Tract Computation...@>=
 static void tract_compute(sp_data *sp, tract *tr, 
     SPFLOAT @, in, 
@@ -143,8 +141,15 @@ static void tract_compute(sp_data *sp, tract *tr,
 {
     @/ SPFLOAT @, r, w;
     int i;
+    SPFLOAT @, amp;
+    int current_size;
+    transient_pool *pool;
+    transient *n;
+    SPFLOAT noise;
+
 
     @/
+    @<Process Transients@>@/
     @<Calculate Scattering Junctions@>@/
     @<Calculate Scattering for Nose...@>@/
     @<Update Left/Right delay lines...@>@/
@@ -271,7 +276,7 @@ static void tract_calculate_nose_reflections(tract *tr)
     }
 }
 
-@ %TODO; is this function actually doing anything at the moment?
+@ %TODO: Explain these functions. 
 
 @<Reshape Vocal Tract @>=
 
@@ -296,9 +301,9 @@ static void tract_reshape(tract *tr)
     SPFLOAT diameter;
     SPFLOAT target_diameter;
     int i;
-    @q int last_obstruction; @>
+    int current_obstruction;
 
-    @q last_obstruction = -1; @>
+    current_obstruction = -1; 
     amount = tr->block_time * tr->movement_speed;
 
     for(i = 0; i < tr->n; i++) {
@@ -306,7 +311,7 @@ static void tract_reshape(tract *tr)
         diameter = tr->diameter[i];
         target_diameter = tr->target_diameter[i];
 
-        @q if(diameter <= 0) last_obstruction = i; @>
+        if(diameter < EPSILON) current_obstruction = i;
 
         if(i < tr->nose_start) slow_return = 0.6;
         else if(i >= tr->tip_start) slow_return = 1.0;
@@ -320,6 +325,12 @@ static void tract_reshape(tract *tr)
 
     }
 
+    if(tr->last_obstruction > -1 && current_obstruction == -1 && 
+            tr->noseA[0] < 0.05) {
+        append_transient(&tr->tpool, tr->last_obstruction);
+    }
+    tr->last_obstruction = current_obstruction;
+
     tr->nose_diameter[0] = move_towards(tr->nose_diameter[0], tr->velum_target,
             amount * 0.25, amount * 0.1);
     tr->noseA[0] = tr->nose_diameter[0] * tr->nose_diameter[0];
@@ -332,25 +343,162 @@ any obstructions are noted during the reshaping of the vocal tract
 (see |@<Reshape...@>|), and the latest obstruction position is noted and pushed
 onto a stack of transients. During the vocal tract computation, the exponential
 damping contributes to the overal amplitude of the left-going and right-going
-delay lines at that precise diameter location. 
+delay lines at that precise diameter location. This can be seen in the section
+|@<Process Transients@>|.
 
 % TODO: Wouldn't it be nice to have a plot of what the transient looks like?
-% TODO: add data structure. 
 
 @<Vocal Tract Transients@>=
-@<Add Transient@>@/
+@<Append Transient@>@/
 @<Remove Transient@>@/
-@<Process Transients@>@/
+
+@ The transient pool is initialized inside along with the entire vocal tract
+inside of |@<Vocal Tract Initialization@>|. It essentially sets the pool
+to a size of zero and that the first available free transient is at index "0".
+
+The transients in the pool will all have their boolean variable |is_free|,
+set to be true so that they can be in line to be selected. 
+
+@<Initialize Transient Pool@>=
+tr->tpool.size = 0;
+tr->tpool.next_free = 0;
+for(i = 0; i < MAX_TRANSIENTS; i++) {
+    tr->tpool.pool[i].is_free = 1;
+    tr->tpool.pool[i].id = i;
+}
 
 @ Any obstructions noted during |@<Reshape...@>| must be appended to the list 
 of previous transients. 
-@<Add Transient@>=
+The function will return a 0 on failure, and a 1 on success.
+
+Here is an overview of how a transient may get appended:
+\item{0.} Check and see if the pool is full. If this is so, return 0.
+\item{1.} If there is no recorded next free (the id is -1), search for 
+one using brute force and check for any free transients. If none can be
+found, return 0. Since |MAX_TRANSIENTS| is a low N, even the worst-case 
+searches do not pose a significant performance penalty. 
+\item{2.} With a transient found, assign the current root of the list to be
+the next value in the transient. (It does not matter if the root is NULL, 
+because the size of the list will prevent it from ever being accessed.)
+\item{3.} Increase the size of the pool by 1.
+\item{4.} Toggle the |is_free| boolean of the current transient to be false.
+\item{5.} Set the |position|.
+\item{6.} Set the |time_alive| to be zero seconds.
+\item{7.} Set the |lifetime| to be 200ms, or 0.2 seconds.
+\item{8.} Set the |strength| to an amplitude 0.3. 
+\item{9.} Set the |exponent| parameter to be 200.
+\item{10.} Set the |next_free| parameter to be $-1$.
+
+@<Append Transient@>=
+static int append_transient(transient_pool *pool, int position)
+{
+    int i;
+    int free_id;
+    transient *t;
+
+    free_id = pool->next_free;
+    if(pool->size == MAX_TRANSIENTS) return 0;
+
+    if(free_id == -1) {
+        for(i = 0; i < MAX_TRANSIENTS; i++) {
+            if(pool->pool[i].is_free) {
+                free_id = i;
+                break;
+            }
+        }
+    }
+
+    if(free_id == -1) return 0;
+
+    t = &pool->pool[free_id];
+    t->next = pool->root;
+    pool->root = t;
+    pool->size++;
+    t->is_free = 0;
+    t->time_alive = 0;
+    t->lifetime = 0.2;
+    t->strength = 1.0;
+    t->exponent = 200;
+    pool->next_free = -1;
+    return 0;
+}
 
 @ When a transient has lived it's lifetime, it must be removed from the list of
-transients. 
+transients. To keep things sane, transients have a unique ID for identification.
+This is preferred to comparing pointer addresses. While more efficient, this
+method is prone to subtle implementation errors. 
+
+The method for removing a transient from a linked list is fairly typical:
+
+\item{0.} If the transient *is* the root, set the root to be the next value. 
+Decrease the size by one, and return.
+\item{1.} Iterate through the list and search for the entry. 
+\item{2.} Once the entry has been found, decrease the pool size by 1. 
+\item{3.} The transient, now free for reuse, can now be toggled to be free,
+and it can be the next variable ready to be used again. 
 @<Remove Transient@>=
+
+static void remove_transient(transient_pool *pool, unsigned int id)
+{
+    int i;
+    transient *n;
+
+    pool->next_free = id;
+    n = pool->root;
+    if(id == n->id) {
+        pool->root = n->next;
+        pool->size--;
+        return;
+    }
+
+    for(i = 0; i < pool->size; i++) {
+        if(n->next->id == id) {
+            pool->size--;
+            n->next->is_free = 1;
+            n->next = n->next->next;
+            break;
+        }
+        n = n->next;
+    }
+}
 
 @ Transients are processed during |@<Vocal Tract Computation@>|. The transient
 list is iterated through, their contributions are made to the Left and Right 
 delay lines. 
+
+In this implementation, the transients in the list are iterated through, and
+their contributions are calculated using the following exponential function:
+
+$$A = s2^{-E_0 * t}$$
+
+Where:
+\item{$\bullet$} $A$ is the contributing amplitude to the left and right-going
+components.
+\item{$\bullet$} $s$ is the overall strength of the transient.
+\item{$\bullet$} $E_0$ is the exponent variable constant.
+\item{$\bullet$} $t$ is the time alive. 
+
+This particular function also must check for any transients that need to
+be removed, and removes them. Some caution must be made to make sure that
+this is done properly. Because a call to |remove_transient| changes the 
+size of the pool, a copy of the current size is copied to a variable for the 
+for loop.
+Since the list iterates in order, it is presumably 
+safe to remove values from the list while the list is iterating.
+
+
 @<Process Transients@>=
+    pool = &tr->tpool;
+    current_size = pool->size;
+    n = pool->root;
+    for(i = 0; i < current_size; i++) {
+        noise = (SPFLOAT) sp_rand(sp) / SP_RANDMAX;
+        amp = n->strength * pow(2, -1.0 * n->exponent * n->time_alive);
+        tr->L[n->position] += amp * 0.5 * noise;
+        tr->R[n->position] += amp * 0.5 * noise;
+        n->time_alive += tr->T * 0.5;
+        if(n->time_alive > n->lifetime) {
+             remove_transient(pool, n->id);
+        }
+        n = n->next;
+    }
