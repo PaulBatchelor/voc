@@ -104,6 +104,17 @@ offering 5 dimensions of control. In addition the main Sporth plugin, there
 are also smaller unit generators implementing portions of Voc, such as
 the vocal tract filter. 
 
+{\tt voc.lua} (not generated but included with the source code) contains 
+metadata needed to implement Voc as a Soundpipe module.
+
+|@(ex_voc.c@>| Is a small C program that uses Voc, written in the style
+of a classic Soundpipe example.
+
+|@(t_voc.c@>| Is a small C program written for the Soundpipe testing utility.
+
+|@(p_voc.c@>| Is a small C program written for the Soundpipe perfomance 
+measurement utility.
+
 \medskip
 
 
