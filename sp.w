@@ -1,6 +1,6 @@
 @* Soundpipe Files.
 
-This section here outlines files specifically needed to fulfil the Soundpipe 
+This section here outlines files specifically needed to fulfill the Soundpipe 
 the requirements for being a Soundpipe module. 
 
 The components of a fully implemented Soundpipe module consist of the 
@@ -28,6 +28,9 @@ Each soundpipe module comes with a small example file showcasing how to use a
 module. This one utilizes the macro tongue control outlined in 
 |@<Voc Set Tongue Shape@>| to shape the vowel formants. In this case, a 
 single LFO is modulating the tract position. 
+
+In addition to providing some example code, these short programs often come
+in handy with debugging programs like GDB and Valgrind.
 @(ex_voc.c@>=
 
 #include <stdlib.h>
@@ -75,6 +78,57 @@ int main() {
     sp_voc_destroy(&ud.voc);
     sp_ftbl_destroy(&ud.ft);
     sp_osc_destroy(&ud.osc);
+
+    sp_destroy(&sp);
+    return 0;
+}
+
+@ \subsec{Soundpipe Unit Test}
+The prototypical soundpipe unit test will fill a buffer of memory with
+samples. The md5 of this buffer is taken, and then compared with a
+reference md5. If they match, the signal is sample-accurately identical 
+to the reference and the test passes. A test that does not pass can mean
+any number of things went wrong, and indicates that the module should be
+seriously looked at it.
+@(t_voc.c@>=
+
+@ \subsec{Soundpipe Perfomance Test}
+
+The essence of a performance test in Soundpipe consists of running the 
+compute function enough times so that some significant computation time 
+is taken up. From there it is measured using a OS timing utility like
+{\tt time}, and saved to a log file. The timing information from this 
+file can be plotted against other soundpipe module times, which can be useful
+to see how certain modules perform relative to others. 
+
+@(p_voc.c@>=
+
+#include <stdlib.h>
+#include <stdio.h>
+#include "soundpipe.h"
+#include "config.h"
+
+int main() {
+    sp_data *sp;
+    sp_create(&sp);
+    sp_srand(sp, 12345);
+    sp->sr = SR;
+    sp->len = sp->sr * LEN;
+    uint32_t t, u;
+    SPFLOAT out = 0;
+
+    sp_voc *unit[NUM];
+
+    for(u = 0; u < NUM; u++) { 
+        sp_voc_create(&unit[u]);
+        sp_voc_init(sp, unit[u]);
+    }
+
+    for(t = 0; t < sp->len; t++) {
+        for(u = 0; u < NUM; u++) sp_voc_compute(sp, unit[u], &out);
+    }
+
+    for(u = 0; u < NUM; u++) sp_voc_destroy(&unit[u]);
 
     sp_destroy(&sp);
     return 0;
