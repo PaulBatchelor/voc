@@ -11,92 +11,42 @@ sptbl["voc"] = {
         destroy = "sp_voc_destroy",
         init = "sp_voc_init",
         compute = "sp_voc_compute",
-        other = {
-            sp_voc_set = {
-                description = "voc_set description goes here.",
-                args = {
-                    {
-                        name = "var1",
-                        type = "SPFLOAT",
-                        description = "This is the first parameter",
-                        default = 1.5
-                    },
-                    {
-                        name = "var2",
-                        type = "SPFLOAT",
-                        description = "This is the second parameter",
-                        default = 1.5
-                    }
-                }
-            }
-        }
     },
 
     params = {
-        mandatory = {
-            {
-                name = "bar",
-                type = "sp_ftbl *",
-                description = "This is a mandatory table value. It does not have a default value, so we set it to 'N/A'. Any that does not or cannot have a default value should set this default value to 'N/A'.",
-                default = "N/A"
-            },
-            {
-                name = "bar2",
-                type = "SPFLOAT",
-                description = "This is a mandatory parameter. In soundpipe, users will always need to specify this value, but a default value has been giving in case it is needed to write more complicated engines in the future.",
-                default = 123
-            }
-        },
-
-        optional = {
-            {
-                name = "blah_1",
-                type = "SPFLOAT",
-                description = "This is an optional parameter. These values are always set to a value by default, and can be set after the init function has been called.",
-                default = 1.5
-            },
-            {
-                name = "blah_2",
-                type = "SPFLOAT",
-                description ="This is yet another optional parameter...",
-                default = 456.7
-            },
-        }
     },
 
     modtype = "module",
 
-    description = [[A short title describing the module
+    description = [[A vocal tract physical model.
 
-    This is a description of the entire module.  This is not a real module. This description should be a comprehensive sumary of what this function does.
+Based on the Pink Trombone algorithm by Neil Thapen, Voc implements a physical 
+model of the vocal tract glottal pulse wave. The tract model is based on the 
+classic Kelly-Lochbaum
+segmented cylindrical 1d waveguide model, and the glottal pulse wave is a
+LF glottal pulse model. 
 
-Inside the Lua table, this is expressed as a multiline string, however it does not adhere to the tradtional 80 column rule found in programming.
+The soundpipe source code for Voc is generated via ctangle, one half of the
+literate documentation system known CWEB. The CWEB are maintained in a 
+separate repository. They are hosted on github here: 
+http://www.github.com/paulbatchelor/voc
 
-Write as much text as needed here...
+This documentation is a stub. For a full overview on proper usage, consult
+the "Top-level functions" section of the documented code, a copy of which
+can be found at the Voc project page pbat.ch/proj/voc, or generate the PDF
+from the github page described above.
 ]],
 
-    ninputs = 2,
-    noutputs = 2,
+    ninputs = 0,
+    noutputs = 1,
 
     inputs = {
-        {
-            name = "clock",
-            description = "this is the clock source for a made up plugin."
-        },
-        {
-            name = "input",
-            description = "this is the audio input for a made up plugin."
-        },
     },
 
     outputs = {
         {
-            name = "out_left",
-            description = "Stereo left output for voc."
-        },
-        {
-            name = "out_right",
-            description = "Stereo right output for voc."
+            name = "out",
+            description = "Voc output."
         },
     }
 
