@@ -55,11 +55,19 @@ The code below shows the outline for the main Sporth Ugen.
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#ifdef BUILD_SPORTH_PLUGIN
 #include <soundpipe.h>
 #include <sporth.h>
 #include "voc.h"
+#else
+#include "plumber.h"
+#endif
 
+#ifdef BUILD_SPORTH_PLUGIN
 static int sporth_voc(plumber_data *pd, sporth_stack *stack, void **ud)
+#else
+int sporth_voc(sporth_stack *stack, void *ud)
+#endif
 {
     sp_voc *voc;
     SPFLOAT out;
@@ -68,6 +76,11 @@ static int sporth_voc(plumber_data *pd, sporth_stack *stack, void **ud)
     SPFLOAT diameter;
     SPFLOAT tenseness;
     SPFLOAT nasal;
+#ifndef BUILD_SPORTH_PLUGIN
+    plumber_data *pd;
+    pd = ud;
+#endif
+
 
     switch(pd->mode) {
         case PLUMBER_CREATE:@/
@@ -100,7 +113,11 @@ It is here that the top-level function |@<Voc Crea...@>| is called.
 @<Creation@>=
 
 sp_voc_create(&voc);
+#ifdef BUILD_SPORTH_PLUGIN
 *ud = voc;
+#else
+plumber_add_ugen(pd, SPORTH_VOC, voc);
+#endif
 if(sporth_check_args(stack, "fffff") != SPORTH_OK) {
     plumber_print(pd, "Voc: not enough arguments!\n");    
 }
@@ -121,7 +138,11 @@ that this is not an ideal design choice.)
 It is here that the top-level function |@<Voc Init...@>| is called.
 
 @<Initialization@>=
+#ifdef BUILD_SPORTH_PLUGIN
 voc = *ud;
+#else
+voc = pd->last->ud;
+#endif
 sp_voc_init(pd->sp, voc);
 nasal = sporth_stack_pop_float(stack);
 tenseness = sporth_stack_pop_float(stack);
@@ -139,7 +160,11 @@ floating point values are pushed and popped.
 It is here that the top-level function |@<Voc Comp...@>| is called.
 
 @<Computation@>=
+#ifdef BUILD_SPORTH_PLUGIN
 voc = *ud;
+#else
+voc = pd->last->ud;
+#endif
 nasal = sporth_stack_pop_float(stack);
 tenseness = sporth_stack_pop_float(stack);
 diameter = sporth_stack_pop_float(stack);
@@ -162,7 +187,11 @@ should be consequently freed here.
 
 It is here that the top-level function |@<Voc Dest...@>| is called.
 @<Destruction@>=
+#ifdef BUILD_SPORTH_PLUGIN
 voc = *ud;
+#else
+voc = pd->last->ud;
+#endif
 sp_voc_destroy(&voc);
 
 @ A dynamically loaded sporth unit-generated such as the one defined here 
@@ -170,14 +199,17 @@ needs to have a globally accessible function called |sporth_return_ugen|.
 All this function needs to do is return the ugen function, which is of type
 |plumber_dyn_func|. 
 @<Return Function@>=
+#ifdef BUILD_SPORTH_PLUGIN
 @[plumber_dyn_func sporth_return_ugen() @]
 {
     return sporth_voc;
 }
+#endif
 
 @ \subsec{A Ugen for the Vocal Tract Model}
 @(ugen.c@> +=
 
+#ifdef BUILD_SPORTH_PLUGIN
 static int sporth_tract(plumber_data *pd, sporth_stack *stack, void **ud)
 {
     sp_voc *voc;
@@ -234,12 +266,13 @@ static int sporth_tract(plumber_data *pd, sporth_stack *stack, void **ud)
 
     return PLUMBER_OK;
 }
-
+#endif
 @ \subsec{A multi ugen plugin implementation}
 New Sporth developments contemporary with the creation of Voc have lead to
 the development of Sporth plugins with multiple ugens. 
 
 @(ugen.c@>+= 
+#ifdef BUILD_SPORTH_PLUGIN
 static const plumber_dyn_func sporth_functions[] = {
     sporth_voc,
     sporth_tract,
@@ -253,6 +286,7 @@ int sporth_return_ugen_multi(int n, plumber_dyn_func *f)
     *f = sporth_functions[n];
     return PLUMBER_OK;
 }
+#endif
 
 @* Sporth Code Examples.
 

@@ -49,7 +49,7 @@ sp/%.tex: sp/%.sp
 	sporth_tex $< > $@ 
 
 voc.so: ugen.c voc.o
-	$(CC) $(CFLAGS) -DBUILD_SPORTH_UGEN -shared voc.o $< -o $@ $(LDFLAGS)
+	$(CC) $(CFLAGS) -DBUILD_SPORTH_PLUGIN -shared voc.o $< -o $@ $(LDFLAGS)
 
 debug: debug.o voc.c
 	$(CC) $(CFLAGS) debug.o voc.c -o $@ $(SP_LDFLAGS)
