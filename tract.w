@@ -396,7 +396,7 @@ because the size of the list will prevent it from ever being accessed.)
 \item{8.} Set the |strength| to an amplitude 0.3. 
 \item{9.} Set the |exponent| parameter to be 200.
 \item{10.} Set the |next_free| parameter to be $-1$.
-
+% Position is not being set. Oops.
 @<Append Transient@>=
 static int append_transient(transient_pool *pool, int position)
 {
