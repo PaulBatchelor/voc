@@ -355,8 +355,7 @@ inside of |@<Vocal Tract Initialization@>|. It essentially sets the pool
 to a size of zero and that the first available free transient is at index "0".
 
 The transients in the pool will all have their boolean variable |is_free|,
-set to be true so that they can be in line to be selected. Why in particular
-this is needed in the first place is still a matter of investigation.
+set to be true so that they can be in line to be selected. 
 
 To remove any valgrind issues related to unitialized variables, {\it all}
 the members in the |transient| data struct are set to some parameter.
