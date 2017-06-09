@@ -357,7 +357,11 @@ inside of |@<Vocal Tract Initialization@>|. It essentially sets the pool
 to a size of zero and that the first available free transient is at index "0".
 
 The transients in the pool will all have their boolean variable |is_free|,
-set to be true so that they can be in line to be selected. 
+set to be true so that they can be in line to be selected. Why in particular
+this is needed in the first place is still a matter of investigation.
+
+To remove any valgrind issues related to unitialized variables, {\it all}
+the members in the |transient| data struct are set to some parameter.
 
 @<Initialize Transient Pool@>=
 tr->tpool.size = 0;
@@ -365,6 +369,10 @@ tr->tpool.next_free = 0;
 for(i = 0; i < MAX_TRANSIENTS; i++) {
     tr->tpool.pool[i].is_free = 1;
     tr->tpool.pool[i].id = i;
+    tr->tpool.pool[i].position = 0;
+    tr->tpool.pool[i].time_alive = 0;
+    tr->tpool.pool[i].strength = 0;
+    tr->tpool.pool[i].exponent = 0;
 }
 
 @ Any obstructions noted during |@<Reshape...@>| must be appended to the list 
