@@ -145,8 +145,6 @@ static void tract_compute(sp_data *sp, tract *tr,
     int current_size;
     transient_pool *pool;
     transient *n;
-    SPFLOAT noise;
-
 
     @/
     @<Process Transients@>@/
@@ -396,7 +394,7 @@ because the size of the list will prevent it from ever being accessed.)
 \item{8.} Set the |strength| to an amplitude 0.3. 
 \item{9.} Set the |exponent| parameter to be 200.
 \item{10.} Set the |next_free| parameter to be $-1$.
-% Position is not being set. Oops.
+
 @<Append Transient@>=
 static int append_transient(transient_pool *pool, int position)
 {
@@ -424,9 +422,10 @@ static int append_transient(transient_pool *pool, int position)
     pool->size++;
     t->is_free = 0;
     t->time_alive = 0;
-    t->lifetime = 0.15;
-    t->strength = 0.6;
+    t->lifetime = 0.2;
+    t->strength = 0.3;
     t->exponent = 200;
+    t->position = position;
     pool->next_free = -1;
     return 0;
 }
@@ -500,10 +499,9 @@ safe to remove values from the list while the list is iterating.
     current_size = pool->size;
     n = pool->root;
     for(i = 0; i < current_size; i++) {
-        noise = (SPFLOAT) sp_rand(sp) / SP_RANDMAX;
         amp = n->strength * pow(2, -1.0 * n->exponent * n->time_alive);
-        tr->L[n->position] += amp * 0.5 * noise;
-        tr->R[n->position] += amp * 0.5 * noise;
+        tr->L[n->position] += amp * 0.5;
+        tr->R[n->position] += amp * 0.5;
         n->time_alive += tr->T * 0.5;
         if(n->time_alive > n->lifetime) {
              remove_transient(pool, n->id);
