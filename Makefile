@@ -1,3 +1,5 @@
+.PHONY: pdf
+
 CFLAGS=-fPIC -Wall -ansi -g -pedantic -O3
 SP_LDFLAGS = -lsoundpipe -lsndfile -lm
 LDFLAGS=-lsporth $(SP_LDFLAGS) -lpthread -ldl
@@ -16,7 +18,9 @@ CONFIG?=
 
 include $(CONFIG)
 
-default: voc.pdf libvoc.a
+default: libvoc.a
+
+pdf: voc.pdf
 
 plugin: voc.so 
 
