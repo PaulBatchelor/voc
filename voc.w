@@ -124,21 +124,21 @@ measurement utility.
 @<The Vocal Tract@>@/
 @<Top Level...@>@/
 
-@i data
+@i data.w
 
-@i top
+@i top.w
 
-@i glottis
+@i glottis.w
 
-@i tract
+@i tract.w
 
-@i header 
+@i header.w
 
-@i debug
+@i debug.w
 
-@i ugen
+@i ugen.w
 
-@i sp
+@i sp.w
 
 @* References.
 \bibliography{ref}
