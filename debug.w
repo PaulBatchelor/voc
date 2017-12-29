@@ -23,7 +23,7 @@ parameters, to allow for experimentation without needing to recompile.
 The functions needed to call Voc from C in this way are found in the 
 section |@<Top Level...@>|.
 
-@(debug.c@> = 
+@(debug.c@>=
 #include <soundpipe.h>
 #include <string.h>
 #include <stdlib.h>

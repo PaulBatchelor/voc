@@ -130,7 +130,7 @@ int sp_voc_tract_compute(sp_data *sp, sp_voc *voc, SPFLOAT *in, SPFLOAT *out)
 @ The function |sp_voc_set_frequency| sets the fundamental frequency
 for the glottal wave.
 
-@<Voc Set Frequency@> =
+@<Voc Set Frequency@>=
 void sp_voc_set_frequency(sp_voc *voc, SPFLOAT freq)
 {
     voc->glot.freq = freq;
@@ -293,7 +293,7 @@ parameter value directly controlling tenseness. This function is useful for
 GUI frontends that use direct pointer manipulation like Nuklear, the
 cross-platform UI framework used to make a demo for Voc. 
 
-@<Voc Get Tenseness@> =
+@<Voc Get Tenseness@>=
 SPFLOAT * sp_voc_get_tenseness_ptr(sp_voc *voc)
 {
     return &voc->glot.tenseness;

@@ -3,6 +3,8 @@
 CFLAGS=-fPIC -Wall -ansi -g -pedantic -O3
 SP_LDFLAGS = -lsoundpipe -lsndfile -lm
 LDFLAGS=-lsporth $(SP_LDFLAGS) -lpthread -ldl
+# for more readable C output, try "ctanglex +c -l"
+CTANGLE?=ctangle
 
 SPORTH_FILES= sp/test.tex sp/chant.tex sp/unya.tex sp/rant.tex
 
@@ -40,7 +42,7 @@ voc.pdf: voc.dvi
 	dvipdfm $<
 
 voc.c: voc.w $(WEB) 
-	ctangle $<
+	$(CTANGLE) $<
 
 debug.c: voc.c
 
