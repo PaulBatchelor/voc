@@ -23,6 +23,7 @@ implementation |@(ugen.c@>|.
 @<Voc Set Diameters@>@/
 @<Voc Set Tongue Shape@>@/
 @<Voc Get Counter@>@/
+@<Voc Set Glottis Enable@>@/
 @<Voc Set Tenseness@>@/
 @<Voc Get Tenseness@>@/
 @<Voc Set Velum@>@/
@@ -73,6 +74,7 @@ int sp_voc_compute(sp_data *sp, sp_voc *voc, SPFLOAT *out)
     @q vocal_output = 0; @>
    
     if(voc->counter == 0) {
+        glottis_update(&voc->glot, voc->tr.block_time);
         tract_reshape(&voc->tr); 
         tract_calculate_reflections(&voc->tr); 
         for(i = 0; i < 512; i++) {
@@ -274,6 +276,15 @@ int sp_voc_get_counter(sp_voc *voc)
 {
     return voc->counter;
 }
+
+@ The function |sp_voc_set_glottis_enable| controls the on/off state of
+the glottis.  Attack and release envelopes are applied on transitions.
+@<Voc Set Glottis Enable@>=
+void sp_voc_set_glottis_enable(sp_voc *voc, int enable)
+{
+    voc->glot.enable = enable;
+}
+
 @ The function |sp_voc_set_tenseness| is used to set the tenseness variable,
 used when calculating glottal time coefficients in 
 |@<Set up Glottis Waveform@>|, and is the main factor in calculating 
