@@ -3,8 +3,8 @@
 CFLAGS=-fPIC -Wall -ansi -g -pedantic -O3
 SP_LDFLAGS = -lsoundpipe -lsndfile -lm
 LDFLAGS=-lsporth $(SP_LDFLAGS) -lpthread -ldl
-# for more readable C output, try "ctanglex +c -l"
-CTANGLE?=ctangle
+# for more readable C output:
+#CTANGLE="ctanglex +c -l"
 
 SPORTH_FILES= sp/test.tex sp/chant.tex sp/unya.tex sp/rant.tex
 
@@ -32,7 +32,7 @@ version:
 	git rev-parse HEAD > version
 
 voc.tex: voc.w macros.tex $(WEB) $(PLOTS) $(SPORTH_FILES) version
-	cweave -x voc.w
+	$(CWEAVE) -x voc.w
 
 voc.dvi: voc.tex 
 	tex "\let\pdf+ \input voc"
