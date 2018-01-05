@@ -72,9 +72,11 @@ static SPFLOAT glottis_compute(sp_data *sp, glottis *glot, SPFLOAT lambda)
     out *= voice_loudness;
 
 @q generate white noise source @>
-    noise = 2.0 * ((SPFLOAT) sp_rand(sp) / SP_RANDMAX) - 1;
+@q TODO: apply band pass filter @>
+    noise = 1.0 * ((SPFLOAT) sp_rand(sp) / SP_RANDMAX) - 0.5;
 
-    aspiration = (1 - sqrt(glot->tenseness)) * 0.3 * noise;
+@q TODO: modulate aspiration amplitude in voiced case @>
+    aspiration = (1 - sqrt(glot->tenseness)) * 0.2 * noise;
 
     aspiration *= 0.2;
 
