@@ -4,7 +4,7 @@ CFLAGS=-fPIC -Wall -ansi -g -pedantic -O3
 SP_LDFLAGS = -lsoundpipe -lsndfile -lm
 LDFLAGS=-lsporth $(SP_LDFLAGS) -lpthread -ldl
 # for more readable C output:
-#CTANGLE="ctanglex +c -l"
+#CTANGLE=ctanglex +c -l
 
 SPORTH_FILES= sp/test.tex sp/chant.tex sp/unya.tex sp/rant.tex
 
