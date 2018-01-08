@@ -12,9 +12,8 @@ Things you'll need:
 sporth codebase)
 - GNUplot (needed to generate visuals)
 
-Running "make" with no arguments will run cweave and compile voc.pdf. Because
-the program needs to compile programs needed by the tex file, ctangle is
-implicitely called yield all the C code. The core C files generated are 
+Running "make" with no arguments will run ctangle. 
+The core files generated are 
 *voc.c* and *voc.h*. These can more or less be dropped into a working project
 and it will behave like any other soundpipe module. The exception to this is
 that you will need to use setter and getter functions to set and retrieve
@@ -64,5 +63,3 @@ the public domain.
 using that code such as the PDF, are released on the Creative Commons
 Attribution ShareAlike license. 
 - The included Sporth code examples are all public domain
-
-
