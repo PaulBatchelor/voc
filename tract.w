@@ -278,20 +278,6 @@ static void tract_calculate_nose_reflections(tract *tr)
 
 @<Reshape Vocal Tract @>=
 
-static SPFLOAT move_towards(SPFLOAT current, SPFLOAT target, 
-        SPFLOAT amt_up, SPFLOAT amt_down)
-{
-    SPFLOAT tmp;
-    if(current < target) {
-        tmp = current + amt_up;
-        return MIN(tmp, target);
-    } else {
-        tmp = current - amt_down;
-        return MAX(tmp, target);
-    }
-    return 0.0;
-}
-
 static void tract_reshape(tract *tr)
 {
     SPFLOAT amount;

@@ -9,6 +9,7 @@ LF-model\cite{lu2000glottal}.
 @<The Glottis@>=
 @<Set up Glottis Waveform@>@/
 @<Glottis Initialization@>@/
+@<Glottis Update@>@/
 @<Glottis Computation@>@/
 
 @ Initializiation of the glottis is done inside of |glottis_init|. 
@@ -16,17 +17,31 @@ LF-model\cite{lu2000glottal}.
 @<Glottis Initialization@>=
 static void glottis_init(glottis *glot, SPFLOAT sr)
 {
+    glot->enable = 1; /* boolean 0 or 1 */
     glot->freq = 140; /* 140Hz frequency by default */
     glot->tenseness = 0.6; /* value between 0 and 1 */
+    glot->intensity = 0; /* value between 0 and 1 */
+    glot->attack_time = 0.09;
+    glot->release_time = 0.23;
     glot->T = 1.0/sr; /* big T */
     glot->time_in_waveform = 0;
     glottis_setup_waveform(glot, 0);
 }
 
-@ This is where a single sample of audio is computed for the glottis
+@ This is where glottis parameters are updated per sample block
 
-% TODO: implement intensity and loudness, if needed
-% out = out * glot->intensity * glot->loudness;
+@<Glottis Update@>=
+static void glottis_update(glottis *glot, SPFLOAT block_time)
+{
+    /* update attack and release envelope */
+    SPFLOAT target_intensity = glot->enable == 1 ? 1 : 0;
+    glot->intensity = move_towards(glot->intensity,
+        target_intensity,
+        block_time / glot->attack_time,
+        block_time / glot->release_time);
+}
+
+@ This is where a single sample of audio is computed for the glottis
 
 @<Glottis Computation@>=
 static SPFLOAT glottis_compute(sp_data *sp, glottis *glot, SPFLOAT lambda)
@@ -35,10 +50,9 @@ static SPFLOAT glottis_compute(sp_data *sp, glottis *glot, SPFLOAT lambda)
     SPFLOAT aspiration;
     SPFLOAT noise;
     SPFLOAT t;
-    SPFLOAT intensity;
+    SPFLOAT voice_loudness;
 
     out = 0;
-    intensity = 1.0;
     glot->time_in_waveform += glot->T;
 
     if(glot->time_in_waveform > glot->waveform_length) {
@@ -54,20 +68,21 @@ static SPFLOAT glottis_compute(sp_data *sp, glottis *glot, SPFLOAT lambda)
     } else {
         out = glot->E0 * exp(glot->alpha * t) * sin(glot->omega * t);
     }
-
-@q out = out * glot->intensity * glot->loudness @>
+    voice_loudness = pow(glot->tenseness, 0.25);
+    out *= voice_loudness;
 
 @q generate white noise source @>
-    noise = 2.0 * ((SPFLOAT) sp_rand(sp) / SP_RANDMAX) - 1;
+@q TODO: apply band pass filter @>
+    noise = 1.0 * ((SPFLOAT) sp_rand(sp) / SP_RANDMAX) - 0.5;
 
-@q intensity set to 1.0 for now @>
-    aspiration = intensity * (1 - sqrt(glot->tenseness)) * 0.3 * noise;
+@q TODO: modulate aspiration amplitude in voiced case @>
+    aspiration = (1 - sqrt(glot->tenseness)) * 0.2 * noise;
 
     aspiration *= 0.2;
 
     out += aspiration;
 
-    return out;
+    return out * glot->intensity;
 }
 
 @ The function |glottis_setup_waveform| is tasked with setting the variables
