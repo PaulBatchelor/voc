@@ -58,7 +58,7 @@ voc.so: ugen.c voc.o
 	$(CC) $(CFLAGS) -DBUILD_SPORTH_PLUGIN -shared voc.o $< -o $@ $(LDFLAGS)
 
 debug: debug.o voc.c
-	$(CC) $(CFLAGS) debug.o voc.c -o $@ $(SP_LDFLAGS)
+	$(CC) $(CFLAGS) debug.o voc.c -o $@
 
 plot: plot.o voc.c
 	$(CC) $(CFLAGS) plot.o voc.c -o $@ $(SP_LDFLAGS)
@@ -86,3 +86,4 @@ clean:
 	rm -rf plots/*.dat
 	rm -rf version
 	rm -rf sp/*.tex
+	rm -rf libvoc.a

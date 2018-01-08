@@ -55,6 +55,7 @@ This subsection contains all the data structs needed by Voc.
 @<Glottis Data...@>@/
 @<Transient Data...@>@/
 @<Tract Data...@>@/
+@<Utilities...@>@/
 @<Voc Main...@>@/
 
 @ The top-most data structure is |sp_voc|, designed to be an opaque
@@ -73,10 +74,17 @@ struct sp_voc {
 @ The glottis data structure contains all the variables used by the glottis.
 See |@<The Glottis@>| to see the implementation of the glottal sound source.
 
+\item{$\bullet$} |enable| is the on/off state of the glottis
 \item{$\bullet$} |freq| is the frequency
 \item{$\bullet$} |tenseness| is the tenseness of the glottis (more or less looks
 like a cross fade between voiced and unvoiced sound). It is a value in the
 range $[0,1]$.
+\item{$\bullet$} |intensity| is an internal value used for applying attack and
+release on |enable| transitions
+\item{$\bullet$} |attack_time| is the time in seconds to reach full amplitude
+following glottis on
+\item{$\bullet$} |release_time| is the time in seconds to reach 0 amplitude
+following glottis off
 \item{$\bullet$} |Rd| % is what?
 \item{$\bullet$} |waveform_length| provides the period length (in seconds) of
 the fundamental frequency, in seconds.
@@ -96,8 +104,12 @@ in seconds.
 @<Glottis Data Structure@>=
 
 typedef struct {
+    int @, enable;
     SPFLOAT @, freq; 
     SPFLOAT @, tenseness; 
+    SPFLOAT @, intensity;
+    SPFLOAT @, attack_time;
+    SPFLOAT @, release_time;
     SPFLOAT @, Rd; 
     SPFLOAT @, waveform_length; 
     SPFLOAT @, time_in_waveform;
@@ -203,3 +215,18 @@ typedef struct {
     SPFLOAT @, T;
 } tract;
 
+@
+@<Utilities@>=
+
+static SPFLOAT move_towards(SPFLOAT current, SPFLOAT target,
+        SPFLOAT amt_up, SPFLOAT amt_down)
+{
+    SPFLOAT tmp;
+    if(current < target) {
+        tmp = current + amt_up;
+        return MIN(tmp, target);
+    } else {
+        tmp = current - amt_down;
+        return MAX(tmp, target);
+    }
+}
