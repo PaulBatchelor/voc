@@ -204,8 +204,8 @@ this is set to 10 in pink trombone
 \item{$\bullet$} {\bf lip\_start}, index where lip starts. this constant is 
 set to 39.
 \item{$\bullet$} {\bf tip\_start}, this is set to 32.
-\item{$\bullet$} {\bf tongue\_index} 
-\item{$\bullet$} {\bf tongue\_diameter}
+\item{$\bullet$} {\bf tongue\_index}, nominal range [12 .. 29]
+\item{$\bullet$} {\bf tongue\_diameter}, nominal range [2 .. 3.5]
 \item{$\bullet$} {\bf diameters}, the floating point array to write to 
 
 For practical use cases, it is not ideal to call this function directly.
@@ -225,7 +225,7 @@ void sp_voc_set_diameters(sp_voc *voc, @/
     SPFLOAT t;
     SPFLOAT fixed_tongue_diameter;
     SPFLOAT curve;
-    int grid_offset = 0;
+    SPFLOAT grid_offset = 1.7;
 
     for(i = blade_start; i < lip_start; i++) {
         t = 1.1 * M_PI * 
