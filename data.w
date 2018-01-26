@@ -169,7 +169,6 @@ typedef struct {
     SPFLOAT @, diameter[44];
     SPFLOAT @, rest_diameter[44];
     SPFLOAT @, target_diameter[44];
-    SPFLOAT @, new_diameter[44];
     SPFLOAT @, R[44]; @t \indent component going right @>@/
     SPFLOAT @, L[44]; @t \indent component going left @>@/
     SPFLOAT @, reflection[45];
