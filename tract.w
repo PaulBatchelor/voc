@@ -65,7 +65,6 @@ C does not zero these out by default. Below, the standard function
 memset(tr->diameter, 0, tr->n * sizeof(SPFLOAT));
 memset(tr->rest_diameter, 0, tr->n * sizeof(SPFLOAT));
 memset(tr->target_diameter, 0, tr->n * sizeof(SPFLOAT));
-memset(tr->new_diameter, 0, tr->n * sizeof(SPFLOAT));
 memset(tr->L, 0, tr->n * sizeof(SPFLOAT));
 memset(tr->R, 0, tr->n * sizeof(SPFLOAT));
 memset(tr->reflection, 0, (tr->n + 1) * sizeof(SPFLOAT));
@@ -101,8 +100,7 @@ for(i = 0; i < tr->n; i++) {
 
     tr->diameter[i] = 
         tr->rest_diameter[i] = 
-        tr->target_diameter[i] = 
-        tr->new_diameter[i] = diameter;
+        tr->target_diameter[i] = diameter;
 
 }
 
