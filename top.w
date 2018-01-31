@@ -221,18 +221,19 @@ void sp_voc_set_diameters(sp_voc *voc, @/
     SPFLOAT tongue_diameter, @/
     SPFLOAT *diameters) {
 
+    SPFLOAT grid_offset = 1.7;
+    SPFLOAT fixed_tongue_diameter = 2+(tongue_diameter-2)/1.5;
+    SPFLOAT tongue_amplitude = (1.5 - fixed_tongue_diameter + grid_offset);
     int i;
     SPFLOAT t;
-    SPFLOAT fixed_tongue_diameter;
     SPFLOAT curve;
-    SPFLOAT grid_offset = 1.7;
 
     for(i = blade_start; i < lip_start; i++) {
         t = 1.1 * M_PI * 
             (SPFLOAT)(tongue_index - i)/(tip_start - blade_start);
         fixed_tongue_diameter = 2+(tongue_diameter-2)/1.5;
-        curve = (1.5 - fixed_tongue_diameter + grid_offset) * cos(t);
-        if(i == blade_start - 2 || i == lip_start - 1) curve *= 0.8;
+        curve = tongue_amplitude * cos(t);
+        if(i == lip_start - 1) curve *= 0.8;
         if(i == blade_start || i == lip_start - 2) curve *= 0.94;
         diameters[i] = 1.5 - curve;
     }
