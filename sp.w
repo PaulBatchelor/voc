@@ -1,33 +1,33 @@
 @* Soundpipe Files.
 
-This section here outlines files specifically needed to fulfill the Soundpipe 
-the requirements for being a Soundpipe module. 
+This section here outlines files specifically needed to fulfill the Soundpipe
+the requirements for being a Soundpipe module.
 
-The components of a fully implemented Soundpipe module consist of the 
+The components of a fully implemented Soundpipe module consist of the
 following:
 
-\item{$\bullet$} The core callback code implementing create, destroy, 
+\item{$\bullet$} The core callback code implementing create, destroy,
 initialize, and compute functions (the core of this document)
 \item{$\bullet$} An accompanying header file for the core code (see
-|$(voc.h@>|) 
+|$(voc.h@>|)
 \item{$\bullet$} An example file, showcase a simple usecase for the module
 in a small C program, using the namespace convenction ex\_FOO.c.
-\item{$\bullet$} A metadata file in the form of a Lua table. This file is 
+\item{$\bullet$} A metadata file in the form of a Lua table. This file is
 mainly used to generate documentation for Soundpipe, but it is also used
 to generate Sporth ugen code.
-\item{$\bullet$} A soundpipe test file, using the namespace t\_FOO.c. This 
+\item{$\bullet$} A soundpipe test file, using the namespace t\_FOO.c. This
 file gets included with Soundpipe's internal test utility, which implements
 a form of unit testing for DSP code.
 \item{$\bullet$} A soundpipe performance file, using the namespce p\_FOO.c.
-This file get inslucded with Soundpipe's internal performance utiltity, 
+This file get inslucded with Soundpipe's internal performance utiltity,
 used to gauge how computationally expensive a given Soundpipe module is.
 
 \subsec{A small C Example}
 
 Each soundpipe module comes with a small example file showcasing how to use a
-module. This one utilizes the macro tongue control outlined in 
-|@<Voc Set Tongue Shape@>| to shape the vowel formants. In this case, a 
-single LFO is modulating the tract position. 
+module. This one utilizes the macro tongue control outlined in
+|@<Voc Set Tongue Shape@>| to shape the vowel formants. In this case, a
+single LFO is modulating the tract position.
 
 In addition to providing some example code, these short programs often come
 in handy with debugging programs like GDB and Valgrind.
@@ -41,7 +41,7 @@ in handy with debugging programs like GDB and Valgrind.
 typedef struct {
     sp_voc *voc;
     sp_osc *osc;
-    sp_ftbl *ft; 
+    sp_ftbl *ft;
 } UserData;
 
 void process(sp_data *sp, void *udata) {
@@ -86,7 +86,7 @@ int main() {
 @ \subsec{Soundpipe Unit Test}
 The prototypical soundpipe unit test will fill a buffer of memory with
 samples. The md5 of this buffer is taken, and then compared with a
-reference md5. If they match, the signal is sample-accurately identical 
+reference md5. If they match, the signal is sample-accurately identical
 to the reference and the test passes. A test that does not pass can mean
 any number of things went wrong, and indicates that the module should be
 seriously looked at it.
@@ -101,10 +101,10 @@ seriously looked at it.
 typedef struct {
     sp_voc *voc;
     sp_osc *osc;
-    sp_ftbl *ft; 
+    sp_ftbl *ft;
 } UserData;
 
-int t_voc(sp_test *tst, sp_data *sp, const char *hash) 
+int t_voc(sp_test *tst, sp_data *sp, const char *hash)
 {
     uint32_t n;
     UserData ud;
@@ -114,7 +114,7 @@ int t_voc(sp_test *tst, sp_data *sp, const char *hash)
     sp_voc_create(&ud.voc);
     sp_osc_create(&ud.osc);
     sp_ftbl_create(sp, &ud.ft, 2048);
-    
+
     sp_voc_init(sp, ud.voc);
     sp_gen_sine(sp, ud.ft);
     sp_osc_init(sp, ud.osc, ud.ft, 0);
@@ -123,7 +123,7 @@ int t_voc(sp_test *tst, sp_data *sp, const char *hash)
 
     for(n = 0; n < tst->size; n++) {
         /* compute samples and add to test buffer */
-        osc = 0; 
+        osc = 0;
         voc = 0;
         sp_osc_compute(sp, ud.osc, NULL, &osc);
         if(sp_voc_get_counter(ud.voc) == 0) {
@@ -146,12 +146,12 @@ int t_voc(sp_test *tst, sp_data *sp, const char *hash)
 
 @ \subsec{Soundpipe Perfomance Test}
 
-The essence of a performance test in Soundpipe consists of running the 
-compute function enough times so that some significant computation time 
+The essence of a performance test in Soundpipe consists of running the
+compute function enough times so that some significant computation time
 is taken up. From there it is measured using a OS timing utility like
-{\tt time}, and saved to a log file. The timing information from this 
+{\tt time}, and saved to a log file. The timing information from this
 file can be plotted against other soundpipe module times, which can be useful
-to see how certain modules perform relative to others. 
+to see how certain modules perform relative to others.
 
 @(p_voc.c@>=
 
@@ -171,7 +171,7 @@ int main() {
 
     sp_voc *unit[NUM];
 
-    for(u = 0; u < NUM; u++) { 
+    for(u = 0; u < NUM; u++) {
         sp_voc_create(&unit[u]);
         sp_voc_init(sp, unit[u]);
     }
@@ -185,4 +185,3 @@ int main() {
     sp_destroy(&sp);
     return 0;
 }
-
